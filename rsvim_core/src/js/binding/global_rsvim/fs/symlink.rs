@@ -3,7 +3,6 @@
 use crate::js::JsFuture;
 use crate::js::binding;
 use crate::prelude::*;
-use compact_str::ToCompactString;
 
 #[derive(
   Debug,
@@ -37,8 +36,8 @@ pub fn fs_symlink(
   match std::os::unix::fs::symlink(oldpath, newpath) {
     Ok(_) => Ok(()),
     Err(e) => Err(TheErr::CreateSymlinkFailed(
-      oldpath.to_string_lossy().to_compact_string(),
-      newpath.to_string_lossy().to_compact_string(),
+      oldpath.to_path_buf(),
+      newpath.to_path_buf(),
       e,
     )),
   }
@@ -55,8 +54,8 @@ pub fn fs_symlink(
       match std::os::windows::fs::symlink_file(oldpath, newpath) {
         Ok(_) => Ok(()),
         Err(e) => Err(TheErr::CreateSymlinkFailed(
-          oldpath.to_string_lossy().to_compact_string(),
-          newpath.to_string_lossy().to_compact_string(),
+          oldpath.to_path_buf(),
+          newpath.to_path_buf(),
           e,
         )),
       }
@@ -65,8 +64,8 @@ pub fn fs_symlink(
       match std::os::windows::fs::symlink_dir(oldpath, newpath) {
         Ok(_) => Ok(()),
         Err(e) => Err(TheErr::CreateSymlinkFailed(
-          oldpath.to_string_lossy().to_compact_string(),
-          newpath.to_string_lossy().to_compact_string(),
+          oldpath.to_path_buf(),
+          newpath.to_path_buf(),
           e,
         )),
       }
@@ -74,8 +73,8 @@ pub fn fs_symlink(
     FsSymlinkOptions::Junction => match junction::create(oldpath, newpath) {
       Ok(_) => Ok(()),
       Err(e) => Err(TheErr::CreateSymlinkFailed(
-        oldpath.to_string_lossy().to_compact_string(),
-        newpath.to_string_lossy().to_compact_string(),
+        oldpath.to_path_buf(),
+        newpath.to_path_buf(),
         e,
       )),
     },

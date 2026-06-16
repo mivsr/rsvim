@@ -894,6 +894,78 @@ export namespace RsvimFs {
   }
 
   /**
+   * Make a directory.
+   *
+   * @param {string} path - Directory path.
+   * @param {MkdirOptions} newpath - New symbolic mkdir that pointing to the original file.
+   * @returns {Promise<void>} It resolves to nothing.
+   *
+   * @throws Throws {@mkdir !TypeError} if any parameter is invalid. Or throws {@mkdir Error} if failed to create hard mkdir from the file.
+   *
+   * @example
+   * ```javascript
+   * try {
+   *   await Rsvim.fs.mkdir(".rsvim");
+   *   Rsvim.cmd.echo(`Created directory ".rsvim"`);
+   * } catch (e) {
+   *   Rsvim.cmd.echo(`Failed to create directory ".rsvim": ${e}`);
+   * }
+   * ```
+   */
+  export async function mkdir(
+    path: string,
+    options?: RsvimFs.MkdirOptions,
+  ): Promise<void> {
+    checkIsString(path, `"Rsvim.fs.mkdir" path`);
+
+    options = options ?? {
+      recursive: false,
+      mode: 0o777,
+    };
+    checkIsObject(options, `"Rsvim.fs.mkdir" options`);
+    setDefaultFields(options, {
+      recursive: false,
+      mode: 0o777,
+    });
+
+    // @ts-ignore Ignore warning
+    return await __InternalRsvimGlobalObject.fs_mkdir(path, options);
+  }
+
+  /**
+   * Sync version of {@link mkdir}.
+   *
+   * @example
+   * ```javascript
+   * try {
+   *   Rsvim.fs.mkdirSync(".rsvim");
+   *   Rsvim.cmd.echo(`Created directory ".rsvim"`);
+   * } catch (e) {
+   *   Rsvim.cmd.echo(`Failed to create directory ".rsvim": ${e}`);
+   * }
+   * ```
+   */
+  export function mkdirSync(
+    path: string,
+    options?: RsvimFs.MkdirOptions,
+  ): void {
+    checkIsString(path, `"Rsvim.fs.mkdirSync" path`);
+
+    options = options ?? {
+      recursive: false,
+      mode: 0o777,
+    };
+    checkIsObject(options, `"Rsvim.fs.mkdirSync" options`);
+    setDefaultFields(options, {
+      recursive: false,
+      mode: 0o777,
+    });
+
+    // @ts-ignore Ignore warning
+    __InternalRsvimGlobalObject.fs_mkdir_sync(path, options);
+  }
+
+  /**
    * Open options.
    *
    * :::tip
@@ -1354,6 +1426,29 @@ export namespace RsvimFs {
    * @inline
    * */
   export type SymlinkOptions = "file" | "dir" | "junction";
+
+  /**
+   * Mkdir options.
+   */
+  export type MkdirOptions = {
+    /**
+     * Whether make directory recursively, by default is `false`.
+     *
+     * @defaultValue `false`
+     */
+    recursive?: boolean;
+
+    /**
+     * Unix permission when creating the directory, by default is `0o777`.
+     *
+     * :::note
+     * This option only works on Unix platforms and is ignored on Windows platforms.
+     * :::
+     *
+     * @defaultValue `0o777`
+     */
+    mode?: number;
+  };
 }
 
 export namespace RsvimOpt {

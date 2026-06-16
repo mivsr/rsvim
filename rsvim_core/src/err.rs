@@ -5,7 +5,7 @@ use crate::js::err::JsError;
 use crate::js::module::ModulePath;
 use crate::js::resource::ResourceId;
 use compact_str::CompactString;
-use std::borrow::Cow;
+use std::path::PathBuf;
 use tree_sitter::LanguageError;
 use tree_sitter_loader::LoaderError;
 
@@ -55,7 +55,7 @@ pub enum TheErr {
   UndoCommitNotExist(usize),
 
   #[error("Failed to normalize path `{0}`: {1}.")]
-  NormalizePathFailed(CompactString, IoErr),
+  NormalizePathFailed(PathBuf, IoErr),
 
   #[error("Command `{0}` not found.")]
   CommandNotFound(CompactString),
@@ -73,31 +73,34 @@ pub enum TheErr {
   ModuleNotFound(ModulePath),
 
   #[error("Failed to compile typescript: {0}.")]
-  CompileTypeScriptFailed(Cow<'static, str>),
+  CompileTypeScriptFailed(CompactString),
 
   #[error("Not enough arguments specified.")]
   ArgumentsNotEnough,
 
   #[error("File `{0}` not found: {1}.")]
-  FileNotFound(CompactString, IoErr),
+  FileNotFound(PathBuf, IoErr),
 
   #[error("Failed to open file `{0}`: {1}.")]
-  OpenFileFailed(CompactString, IoErr),
+  OpenFileFailed(PathBuf, IoErr),
 
   #[error("Failed to read file `{0}`: {1}.")]
   ReadFileByRidFailed(ResourceId, IoErr),
 
   #[error("Failed to read file `{0}`: {1}.")]
-  ReadFileByPathFailed(CompactString, IoErr),
+  ReadFileByPathFailed(PathBuf, IoErr),
 
   #[error("Failed to write file `{0}`: {1}.")]
   WriteFileByRidFailed(ResourceId, IoErr),
 
-  #[error("Failed to create symlink `{0}` pointing to `{1}`: {2}.")]
-  CreateSymlinkFailed(CompactString, CompactString, IoErr),
+  #[error("Failed to create symbolic link `{0}` pointing to `{1}`: {2}.")]
+  CreateSymlinkFailed(PathBuf, PathBuf, IoErr),
 
-  #[error("Failed to create link `{0}` pointing to `{1}`: {2}.")]
-  CreateLinkFailed(CompactString, CompactString, IoErr),
+  #[error("Failed to create hard link `{0}` pointing to `{1}`: {2}.")]
+  CreateLinkFailed(PathBuf, PathBuf, IoErr),
+
+  #[error("Failed to create directory `{0}`: {1}.")]
+  CreateDirectoryFailed(PathBuf, IoErr),
 
   #[error("Invalid data.")]
   DataInvalid,

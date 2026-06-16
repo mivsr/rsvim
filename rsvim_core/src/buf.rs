@@ -265,10 +265,7 @@ impl BufferManager {
       Ok(abs_filename) => abs_filename.to_path_buf(),
       Err(e) => {
         trace!("Failed to absolutize filepath {:?}:{:?}", filename, e);
-        return Err(TheErr::NormalizePathFailed(
-          filename.to_string_lossy().to_compact_string(),
-          e,
-        ));
+        return Err(TheErr::NormalizePathFailed(filename.to_path_buf(), e));
       }
     };
 
@@ -282,10 +279,7 @@ impl BufferManager {
       Ok(existed) => existed,
       Err(e) => {
         trace!("Failed to detect file {:?}:{:?}", filename, e);
-        return Err(TheErr::FileNotFound(
-          filename.to_string_lossy().to_compact_string(),
-          e,
-        ));
+        return Err(TheErr::FileNotFound(filename.to_path_buf(), e));
       }
     };
 
@@ -440,15 +434,9 @@ impl BufferManager {
             colorscheme,
           ))
         }
-        Err(e) => Err(TheErr::OpenFileFailed(
-          filename.to_string_lossy().to_compact_string(),
-          e,
-        )),
+        Err(e) => Err(TheErr::OpenFileFailed(filename.to_path_buf(), e)),
       },
-      Err(e) => Err(TheErr::OpenFileFailed(
-        filename.to_string_lossy().to_compact_string(),
-        e,
-      )),
+      Err(e) => Err(TheErr::OpenFileFailed(filename.to_path_buf(), e)),
     }
   }
 
