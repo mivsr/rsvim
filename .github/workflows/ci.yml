@@ -68,15 +68,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
       - uses: davidlattimore/wild-action@latest
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
       - name: Clippy
-        run: cargo clippy --all-targets
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
+          cargo clippy --all-targets
   unit_test:
     name: Unit Test
     strategy:
@@ -91,10 +92,11 @@ jobs:
         with:
           components: clippy
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
       - name: Test
-        run: cargo test --color=never --workspace
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
+          cargo test --color=never --workspace
       - name: Test (--no-default-features)
         if: ${{ contains(matrix.os, 'ubuntu') }}
         run: cargo test --no-default-features --color=never --workspace
@@ -112,8 +114,6 @@ jobs:
         with:
           components: rust-src,clippy,llvm-tools
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
       - uses: taiki-e/install-action@cargo-llvm-cov
       - uses: taiki-e/install-action@nextest
       - name: Nextest (--no-default-features)
@@ -121,6 +121,8 @@ jobs:
         run: cargo nextest run --no-capture --no-default-features --color=never --workspace
       - name: Nextest with code coverage
         run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
           cargo llvm-cov clean --workspace
           cargo llvm-cov nextest --workspace --ignore-filename-regex '_tests.rs|tests' --lcov --output-path lcov.info --color=never --no-capture
       - uses: codecov/codecov-action@v7
