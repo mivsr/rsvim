@@ -14,7 +14,7 @@ Please setup your development environment with:
 You need to clone [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
 
 - Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
-- Run `git submodule update --remote --merge` to update to latest commit.
+- Run `cd tests_and_benchmarks && git submodule update --init && cd ..` to initialize submodules inside it.
 
 ## Rust
 
