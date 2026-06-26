@@ -71,7 +71,7 @@ jobs:
         with:
           submodules: recursive
       - uses: davidlattimore/wild-action@latest
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
