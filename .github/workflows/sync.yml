@@ -1,0 +1,27 @@
+name: Sync Repo
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 00:00 UTC on everyday
+  workflow_dispatch: # Manual trigger
+
+# Only sync if repo is not "mivsr/rsvim"
+jobs:
+  sync:
+    if: github.repository != 'mivsr/rsvim'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout upstream repo 'mivsr/rsvim'
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Force push to target repo
+        run: |
+          git remote add target https://x-access-token:${{ secrets.SYNC_TOKEN }}@github.com/${{ secrets.TARGET_ORG }}/${{ secrets.TARGET_REPO }}.git
+          git push --force target HEAD:main
