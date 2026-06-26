@@ -31,3 +31,6 @@ RSVIM_VERSION.TXT
 # Build binaries
 *.dylib
 *.dll
+
+# Tests
+tests_and_benchmarks
