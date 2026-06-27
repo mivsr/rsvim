@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="logo.svg" src="https://raw.githubusercontent.com/rsvim/assets/main/logo/RSVIM-logo.svg" />
+  <img alt="logo.svg" src="https://raw.githubusercontent.com/mivsr/assets/main/logo/RSVIM-logo.svg" />
 </p>
 
 <p align="center">
@@ -10,9 +10,9 @@ The VIM editor reinvented in Rust+TypeScript.
   <a href="https://crates.io/crates/rsvim"><img alt="rsvim" src="https://img.shields.io/crates/v/rsvim" /></a>
   <a href="https://www.npmjs.com/package/rsvim-types"><img alt="rsvim" src="https://img.shields.io/npm/v/rsvim-types" /></a>
   <a href="https://docs.rs/rsvim_core/latest/"><img alt="rsvim_core" src="https://img.shields.io/docsrs/rsvim_core?label=docs.rs" /></a>
-  <a href="https://github.com/rsvim/rsvim/actions/workflows/release.yml"><img alt="release.yml" src="https://img.shields.io/github/actions/workflow/status/rsvim/rsvim/release.yml" /></a>
-  <a href="https://github.com/rsvim/rsvim/actions/workflows/ci.yml"><img alt="ci.yml" src="https://img.shields.io/github/actions/workflow/status/rsvim/rsvim/ci.yml?branch=main&label=ci" /></a>
-  <a href="https://app.codecov.io/gh/rsvim/rsvim"><img alt="codecov" src="https://img.shields.io/codecov/c/github/rsvim/rsvim" /></a>
+  <a href="https://github.com/mivsr/rsvim/actions/workflows/release.yml"><img alt="release.yml" src="https://img.shields.io/github/actions/workflow/status/mivsr/rsvim/release.yml" /></a>
+  <a href="https://github.com/mivsr/rsvim/actions/workflows/ci.yml"><img alt="ci.yml" src="https://img.shields.io/github/actions/workflow/status/mivsr/rsvim/ci.yml?branch=main&label=ci" /></a>
+  <a href="https://app.codecov.io/gh/rsvim/rsvim"><img alt="codecov" src="https://img.shields.io/codecov/c/github/mivsr/rsvim" /></a>
   <a href="https://discord.gg/5KtRUCAByB"><img alt="discord" src="https://img.shields.io/discord/1220171472329379870?logo=discord&style=social&label=discord" /></a>
 </p>
 
