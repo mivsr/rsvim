@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="logo.svg" src="https://raw.githubusercontent.com/rsvim/assets/main/logo/RSVIM-logo.svg" />
+  <img alt="logo.svg" src="https://raw.githubusercontent.com/mivsr/assets/main/logo/RSVIM-logo.svg" />
 </p>
 
 <p align="center">
