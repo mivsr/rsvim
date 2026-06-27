@@ -68,10 +68,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
+      - name: Submodule
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
       - uses: davidlattimore/wild-action@latest
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
@@ -84,15 +86,17 @@ jobs:
         os: [ubuntu-22.04-arm, macos-15-intel, windows-11-arm]
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v6
+      - name: Submodule
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
       - uses: Swatinem/rust-cache@v2
       - uses: davidlattimore/wild-action@latest
         if: ${{ contains(matrix.os, 'ubuntu') }}
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - uses: actions/checkout@v6
-        with:
-          submodules: recursive
       - name: Test
         run: cargo test --color=never --workspace
       - name: Test (--no-default-features)
@@ -105,15 +109,17 @@ jobs:
         os: [ubuntu-22.04, macos-15, windows-2022]
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v6
+      - name: Submodule
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
       - uses: Swatinem/rust-cache@v2
       - uses: davidlattimore/wild-action@latest
         if: ${{ contains(matrix.os, 'ubuntu') }}
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rust-src,clippy,llvm-tools
-      - uses: actions/checkout@v6
-        with:
-          submodules: recursive
       - uses: taiki-e/install-action@cargo-llvm-cov
       - uses: taiki-e/install-action@nextest
       - name: Nextest (--no-default-features)
@@ -142,12 +148,16 @@ jobs:
             profile: --release
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v6
+      - name: Submodule
+        run: |
+          git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
+          cd tests_and_benchmarks && git submodule update --init && cd ..
       - uses: Swatinem/rust-cache@v2
       - uses: davidlattimore/wild-action@latest
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - uses: actions/checkout@v6
       - name: Build
         run: cargo build ${{ matrix.profile }}
       - name: Build (--no-default-features)
