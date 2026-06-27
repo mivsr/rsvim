@@ -24,7 +24,7 @@ jobs:
     name: Check
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Tsc
         run: |
           npm install -g typescript
@@ -67,7 +67,7 @@ jobs:
         toolchain: [stable, 1.89.0]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Submodule
         run: |
           git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
@@ -86,7 +86,7 @@ jobs:
         os: [ubuntu-22.04-arm, macos-15-intel, windows-11-arm]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Submodule
         run: |
           git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
@@ -109,7 +109,7 @@ jobs:
         os: [ubuntu-22.04, macos-15, windows-2022]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Submodule
         run: |
           git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
@@ -148,7 +148,7 @@ jobs:
             profile: --release
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Submodule
         run: |
           git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks
