@@ -27,7 +27,7 @@ pub struct FsMkdirOptions {
   pub mode: u32,
 }
 
-pub fn sync_fs_mkdir(path: &Path, options: FsMkdirOptions) -> TheResult<()> {
+pub fn fs_mkdir_s(path: &Path, options: FsMkdirOptions) -> TheResult<()> {
   let mut builder = std::fs::DirBuilder::new();
 
   builder.recursive(options.recursive);
@@ -139,7 +139,7 @@ pub fn mkdir_sync<'s>(
 ) {
   let (path, options) = _get_args(scope, args);
 
-  match sync_fs_mkdir(Path::new(&path), options) {
+  match fs_mkdir_s(Path::new(&path), options) {
     Ok(_) => rv.set_undefined(),
     Err(e) => {
       binding::throw_exception(scope, &e);
