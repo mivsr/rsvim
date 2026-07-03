@@ -17,8 +17,9 @@ Please setup your development environment with:
   - Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
   - Run `cd tests_and_benchmarks && git submodule update --init && cd ..` to initialize submodules inside it.
 - Configure git to force Unix style line ending LF (`\n`) instead of Windows style CRLF (`\r\n`):
-  - Run `git config --global core.autocrlf false` to prevent from auto-converting LF to CRLF on checkout.
-  - Run `git config --global core.eol lf` to set default line ending style to LF.
+  - Run `git config core.autocrlf false` to prevent from auto-converting LF to CRLF on checkout.
+  - Run `git config core.eol crlf` to set default line ending style to LF.
+  - Run `git add --update --renormalize` to manually trigger a LF to CRLF convertion for the repo.
 
 
 ## Rust
