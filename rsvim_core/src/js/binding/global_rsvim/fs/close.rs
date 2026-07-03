@@ -7,7 +7,7 @@ use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 
-pub fn s_fs_close(resource_table: ResourceTableArc, rid: ResourceId) {
+pub fn fs_close_s(resource_table: ResourceTableArc, rid: ResourceId) {
   let mut resource_table = lock!(resource_table);
   let mut handle = resource_table.remove(&rid);
   debug_assert!(handle.is_some());
@@ -30,5 +30,5 @@ pub fn close_sync<'s>(
   let state_rc = JsRuntime::state(scope);
   let resource_table = state_rc.borrow().resource_table.clone();
 
-  s_fs_close(resource_table, file_rid);
+  fs_close_s(resource_table, file_rid);
 }
