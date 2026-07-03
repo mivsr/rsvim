@@ -134,7 +134,7 @@ fn _get_args<'s>(
 }
 
 /// `Rsvim.fs.open` API.
-pub fn open<'s>(
+pub fn open_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
