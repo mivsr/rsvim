@@ -33,3 +33,5 @@ pub use stat::stat_async;
 pub use stat::stat_sync;
 pub use symlink::symlink_async;
 pub use symlink::symlink_sync;
+pub use write::write_async;
+pub use write::write_sync;

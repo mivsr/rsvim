@@ -26,8 +26,8 @@ use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_as;
 use crate::js::binding::global_rsvim::fs::read_text_file::fs_read_text_file_as;
 use crate::js::binding::global_rsvim::fs::stat::fs_lstat_as;
 use crate::js::binding::global_rsvim::fs::stat::fs_stat_as;
-use crate::js::binding::global_rsvim::fs::symlink::fs_symlink;
-use crate::js::binding::global_rsvim::fs::write::fs_write;
+use crate::js::binding::global_rsvim::fs::symlink::fs_symlink_s;
+use crate::js::binding::global_rsvim::fs::write::fs_write_s;
 use crate::js::command::CommandManager;
 use crate::js::command::CommandManagerArc;
 use crate::js::module::async_load_import;
@@ -851,7 +851,8 @@ impl EventLoop {
           let resource_table = self.resource_table.clone();
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn_blocking(move || {
-            let maybe_result = fs_write(resource_table, req.file_rid, req.buf);
+            let maybe_result =
+              fs_write_s(resource_table, req.file_rid, req.buf);
             jsrt_forwarder_tx
               .send(JsMessage::FsWriteResp(chan::FsWriteResp {
                 task_id: req.task_id,
@@ -925,7 +926,7 @@ impl EventLoop {
           trace!("Recv FsSymlinkReq:{:?}", req.task_id);
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn_blocking(move || {
-            let maybe_result = fs_symlink(
+            let maybe_result = fs_symlink_s(
               req.oldpath.as_path(),
               req.newpath.as_path(),
               req.options,

@@ -13,7 +13,7 @@ use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 use itertools::Itertools;
 
-pub fn fs_write(
+pub fn fs_write_s(
   resource_table: ResourceTableArc,
   rid: ResourceId,
   buf: Vec<u8>,
@@ -141,7 +141,7 @@ pub fn write_sync<'s>(
   let state_rc = JsRuntime::state(scope);
   let resource_table = state_rc.borrow().resource_table.clone();
 
-  match fs_write(resource_table, file_rid, buf) {
+  match fs_write_s(resource_table, file_rid, buf) {
     Ok(bytes_written) => {
       rv.set_int32(bytes_written as i32);
     }
