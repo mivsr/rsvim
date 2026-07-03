@@ -1,19 +1,9 @@
 //! Resource.
 
-pub mod file;
-pub mod read_dir;
-pub mod text_decoder;
-
 use crate::prelude::*;
-use child_process::ChildProcessResource;
-use child_process::ChildProcessStderrResource;
-use child_process::ChildProcessStdinResource;
-use child_process::ChildProcessStdoutResource;
-use file::FileResource;
 use std::fmt::Debug;
 use std::sync::Arc;
 use std::sync::Mutex;
-use text_decoder::TextDecoderResource;
 
 // ResourceId start from 1.
 #[derive(
@@ -22,7 +12,6 @@ use text_decoder::TextDecoderResource;
 pub struct ResourceId(#[start_from(1)] i32);
 
 #[derive_where::derive_where(Debug)]
-#[derive(Clone)]
 /// Resource container.
 pub struct ResourceContainer<T> {
   id: ResourceId,
@@ -48,6 +37,15 @@ impl<T> ResourceContainer<T> {
   }
 }
 
+impl<T> Clone for ResourceContainer<T> {
+  fn clone(&self) -> Self {
+    ResourceContainer {
+      id: self.id,
+      data: Arc::clone(&self.data),
+    }
+  }
+}
+
 pub type ChildProcessResource = ResourceContainer<std::process::Child>;
 pub type ChildProcessStdinResource =
   ResourceContainer<std::process::ChildStdin>;
@@ -55,6 +53,9 @@ pub type ChildProcessStdoutResource =
   ResourceContainer<std::process::ChildStdout>;
 pub type ChildProcessStderrResource =
   ResourceContainer<std::process::ChildStderr>;
+pub type FileResource = ResourceContainer<std::fs::File>;
+pub type TextDecoderResource = ResourceContainer<encoding_rs::Decoder>;
+pub type ReadDirResource = ResourceContainer<std::fs::ReadDir>;
 
 #[derive(Debug, Clone)]
 pub enum Resource {
