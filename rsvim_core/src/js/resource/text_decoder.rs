@@ -2,6 +2,7 @@
 
 use crate::js::resource::ResourceId;
 use crate::js::resource::Resourcify;
+use encoding_rs::Decoder;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -10,18 +11,18 @@ use std::sync::Mutex;
 pub struct TextDecoderResource {
   id: ResourceId,
   #[derive_where(skip)]
-  data: Arc<Mutex<encoding_rs::Decoder>>,
+  data: Arc<Mutex<Decoder>>,
 }
 
 impl TextDecoderResource {
-  pub fn new(data: encoding_rs::Decoder) -> Self {
+  pub fn new(data: Decoder) -> Self {
     Self {
       id: ResourceId::next(),
       data: Arc::new(Mutex::new(data)),
     }
   }
 
-  pub fn data(&self) -> Arc<Mutex<encoding_rs::Decoder>> {
+  pub fn data(&self) -> Arc<Mutex<Decoder>> {
     self.data.clone()
   }
 }
