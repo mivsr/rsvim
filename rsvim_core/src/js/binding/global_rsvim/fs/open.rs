@@ -64,7 +64,7 @@ pub fn fs_open_s(
   }
 }
 
-pub async fn fs_open_as(
+pub async fn fs_open_a(
   resource_table: ResourceTableArc,
   path: &Path,
   opts: FsOpenOptions,
