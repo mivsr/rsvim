@@ -6,26 +6,12 @@ use crate::js::converter::*;
 use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
-use std::fs::ReadDir;
 
 pub fn fs_read_dir(
   resource_table: ResourceTableArc,
   path: &Path,
 ) -> TheResult<ResourceId> {
   match std::fs::read_dir(path) {
-    Ok(rd) => {
-      let mut resource_table = lock!(resource_table);
-      Ok(resource_table.add_read_dir(rd))
-    }
-    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
-  }
-}
-
-pub async fn async_fs_read_dir(
-  resource_table: ResourceTableArc,
-  path: &Path,
-) -> TheResult<ResourceId> {
-  match tokio::fs::read_dir(path).await {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
       Ok(resource_table.add_read_dir(rd))
