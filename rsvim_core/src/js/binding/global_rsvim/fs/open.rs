@@ -42,7 +42,7 @@ pub struct FsOpenOptions {
   pub write: bool,
 }
 
-pub fn fs_open(
+pub fn fs_open_s(
   resource_table: ResourceTableArc,
   path: &Path,
   opts: FsOpenOptions,
@@ -64,7 +64,7 @@ pub fn fs_open(
   }
 }
 
-pub async fn async_fs_open(
+pub async fn fs_open_as(
   resource_table: ResourceTableArc,
   path: &Path,
   opts: FsOpenOptions,
@@ -184,7 +184,7 @@ pub fn open_sync<'s>(
   let resource_table = state_rc.borrow().resource_table.clone();
 
   let filename = Path::new(&filename);
-  match fs_open(resource_table, filename, options) {
+  match fs_open_s(resource_table, filename, options) {
     Ok(file_rid) => {
       let file_rid = Into::<i32>::into(file_rid);
       let file_rid = file_rid.to_v8(scope);
