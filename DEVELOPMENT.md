@@ -21,7 +21,6 @@ Please setup your development environment with:
   - Run `git config core.eol crlf` to set default line ending style to LF.
   - Run `git add --update --renormalize` to manually trigger a conversion from LF to CRLF in the repo.
 
-
 ## Rust
 
 The `dev.py` script is provided to help running cargo commands, use `dev.py -h` for more details. For window, please use `dev.cmd`.
