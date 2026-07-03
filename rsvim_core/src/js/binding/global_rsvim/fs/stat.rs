@@ -1,8 +1,12 @@
 //! Get file path metadata.
 
+use crate::is_v8_str;
+use crate::js;
 use crate::js::JsFuture;
+use crate::js::JsRuntime;
 use crate::js::binding;
 use crate::js::converter::*;
+use crate::js::pending;
 use crate::prelude::*;
 use std::fs::Metadata;
 use std::time::SystemTime;
@@ -217,5 +221,141 @@ impl JsFuture for FsStatFuture {
     let file_info = file_info.to_v8(scope);
 
     self.promise.open(scope).resolve(scope, file_info).unwrap();
+  }
+}
+
+fn _lstat_args<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+) -> String {
+  debug_assert!(args.length() == 1);
+  debug_assert!(is_v8_str!(args.get(0)));
+  let filename = args.get(0).to_rust_string_lossy(scope);
+  trace!("RsvimFs lstat filename:{:?}", filename);
+  filename
+}
+
+/// `Rsvim.fs.lstat` API.
+pub fn lstat<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _lstat_args(scope, args);
+
+  let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
+  let promise = promise_resolver.get_promise(scope);
+
+  let state_rc = JsRuntime::state(scope);
+  let stat_cb = {
+    let promise = v8::Global::new(scope, promise_resolver);
+    let state_rc = state_rc.clone();
+    move |maybe_result: Option<TheResult<Vec<u8>>>| {
+      let fut = FsStatFuture {
+        promise: promise.clone(),
+        maybe_result,
+      };
+      let mut state = state_rc.borrow_mut();
+      state.pending_futures.push(Box::new(fut));
+    }
+  };
+
+  let mut state = state_rc.borrow_mut();
+  let task_id = js::TaskId::next();
+  pending::create_fs_stat(
+    &mut state,
+    task_id,
+    false,
+    Path::new(&filename),
+    Box::new(stat_cb),
+  );
+
+  rv.set(promise.into());
+}
+
+/// `Rsvim.fs.lstatSync` API.
+pub fn lstat_sync<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _lstat_args(scope, args);
+
+  match fs_lstat(Path::new(&filename)) {
+    Ok(info) => {
+      let info = info.to_v8(scope);
+      rv.set(info);
+    }
+    Err(e) => {
+      binding::throw_exception(scope, &e);
+    }
+  }
+}
+
+fn _stat_args<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+) -> String {
+  debug_assert!(args.length() == 1);
+  debug_assert!(is_v8_str!(args.get(0)));
+  let filename = args.get(0).to_rust_string_lossy(scope);
+  trace!("RsvimFs stat filename:{:?}", filename);
+  filename
+}
+
+/// `Rsvim.fs.stat` API.
+pub fn stat<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _stat_args(scope, args);
+
+  let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
+  let promise = promise_resolver.get_promise(scope);
+
+  let state_rc = JsRuntime::state(scope);
+  let stat_cb = {
+    let promise = v8::Global::new(scope, promise_resolver);
+    let state_rc = state_rc.clone();
+    move |maybe_result: Option<TheResult<Vec<u8>>>| {
+      let fut = FsStatFuture {
+        promise: promise.clone(),
+        maybe_result,
+      };
+      let mut state = state_rc.borrow_mut();
+      state.pending_futures.push(Box::new(fut));
+    }
+  };
+
+  let mut state = state_rc.borrow_mut();
+  let task_id = js::TaskId::next();
+  pending::create_fs_stat(
+    &mut state,
+    task_id,
+    true,
+    Path::new(&filename),
+    Box::new(stat_cb),
+  );
+
+  rv.set(promise.into());
+}
+
+/// `Rsvim.fs.statSync` API.
+pub fn stat_sync<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _stat_args(scope, args);
+
+  match fs_stat(Path::new(&filename)) {
+    Ok(info) => {
+      let info = info.to_v8(scope);
+      rv.set(info);
+    }
+    Err(e) => {
+      binding::throw_exception(scope, &e);
+    }
   }
 }
