@@ -65,6 +65,7 @@ pub enum Resource {
   ChildProcessStdin(ChildProcessStdinResource),
   ChildProcessStdout(ChildProcessStdoutResource),
   ChildProcessStderr(ChildProcessStderrResource),
+  ReadDirResource(ReadDirResource),
 }
 
 #[derive(Debug, rsvim_macro::ArcMutexPtr)]
