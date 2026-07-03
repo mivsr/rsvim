@@ -13,7 +13,7 @@ Please setup your development environment with:
 
 ## Git Repository
 
-- Clone [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
+- Initialize [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
   - Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
   - Run `cd tests_and_benchmarks && git submodule update --init && cd ..` to initialize submodules inside it.
 - Configure git to force Unix style line ending LF (`\n`) instead of Windows style CRLF (`\r\n`):
