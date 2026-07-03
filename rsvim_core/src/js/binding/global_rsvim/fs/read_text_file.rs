@@ -8,7 +8,7 @@ use crate::js::binding;
 use crate::js::pending;
 use crate::prelude::*;
 
-pub fn fs_read_text_file(path: &Path) -> TheResult<String> {
+pub fn sync_fs_read_text_file(path: &Path) -> TheResult<String> {
   match std::fs::read_to_string(path) {
     Ok(buf) => Ok(buf),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -112,7 +112,7 @@ pub fn read_text_file_sync<'s>(
 ) {
   let filename = _get_args(scope, args);
 
-  match fs_read_text_file(Path::new(&filename)) {
+  match sync_fs_read_text_file(Path::new(&filename)) {
     Ok(data) => {
       let data = v8::String::new(scope, &data).unwrap();
 
