@@ -15,3 +15,5 @@ pub mod write;
 pub use close::close_sync;
 pub use link::link_async;
 pub use link::link_sync;
+pub use mkdir::mkdir_async;
+pub use mkdir::mkdir_sync;

@@ -8,7 +8,7 @@ use crate::js::binding;
 use crate::js::pending;
 use crate::prelude::*;
 
-pub fn sync_fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
+pub fn fs_link_s(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   match std::fs::hard_link(oldpath, newpath) {
     Ok(_) => Ok(()),
     Err(e) => Err(TheErr::CreateLinkFailed(
@@ -19,7 +19,7 @@ pub fn sync_fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   }
 }
 
-pub async fn async_fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
+pub async fn fs_link_as(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   match tokio::fs::hard_link(oldpath, newpath).await {
     Ok(_) => Ok(()),
     Err(e) => Err(TheErr::CreateLinkFailed(
@@ -125,7 +125,7 @@ pub fn link_sync<'s>(
 ) {
   let (oldpath, newpath) = _get_args(scope, args);
 
-  match sync_fs_link(Path::new(&oldpath), Path::new(&newpath)) {
+  match fs_link_s(Path::new(&oldpath), Path::new(&newpath)) {
     Ok(_) => rv.set_undefined(),
     Err(e) => {
       binding::throw_exception(scope, &e);
