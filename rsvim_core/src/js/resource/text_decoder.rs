@@ -1,7 +1,7 @@
 //! Text decoder resource.
 
+use crate::js::resource::ResourceContainer;
 use crate::js::resource::ResourceId;
-use crate::js::resource::Resourcify;
 use encoding_rs::Decoder;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -27,7 +27,7 @@ impl TextDecoderResource {
   }
 }
 
-impl Resourcify for TextDecoderResource {
+impl ResourceContainer for TextDecoderResource {
   fn id(&self) -> ResourceId {
     self.id
   }

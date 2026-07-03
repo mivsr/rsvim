@@ -1,7 +1,7 @@
 //! Command child-process resource.
 
+use crate::js::resource::ResourceContainer;
 use crate::js::resource::ResourceId;
-use crate::js::resource::Resourcify;
 use std::process::Child;
 use std::process::ChildStderr;
 use std::process::ChildStdin;
@@ -30,7 +30,7 @@ impl ChildProcessResource {
   }
 }
 
-impl Resourcify for ChildProcessResource {
+impl ResourceContainer for ChildProcessResource {
   fn id(&self) -> ResourceId {
     self.id
   }
@@ -57,7 +57,7 @@ impl ChildProcessStdinResource {
   }
 }
 
-impl Resourcify for ChildProcessStdinResource {
+impl ResourceContainer for ChildProcessStdinResource {
   fn id(&self) -> ResourceId {
     self.id
   }
@@ -84,7 +84,7 @@ impl ChildProcessStdoutResource {
   }
 }
 
-impl Resourcify for ChildProcessStdoutResource {
+impl ResourceContainer for ChildProcessStdoutResource {
   fn id(&self) -> ResourceId {
     self.id
   }
@@ -111,7 +111,7 @@ impl ChildProcessStderrResource {
   }
 }
 
-impl Resourcify for ChildProcessStderrResource {
+impl ResourceContainer for ChildProcessStderrResource {
   fn id(&self) -> ResourceId {
     self.id
   }

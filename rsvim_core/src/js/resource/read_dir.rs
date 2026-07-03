@@ -1,7 +1,7 @@
 //! ReadDir resource.
 
+use crate::js::resource::ResourceContainer;
 use crate::js::resource::ResourceId;
-use crate::js::resource::Resourcify;
 use std::fs::ReadDir;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -27,7 +27,7 @@ impl ReadDirResource {
   }
 }
 
-impl Resourcify for ReadDirResource {
+impl ResourceContainer for ReadDirResource {
   fn id(&self) -> ResourceId {
     self.id
   }

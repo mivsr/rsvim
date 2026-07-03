@@ -1,7 +1,7 @@
 //! File resource.
 
+use crate::js::resource::ResourceContainer;
 use crate::js::resource::ResourceId;
-use crate::js::resource::Resourcify;
 use std::fs::File;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -27,7 +27,7 @@ impl FileResource {
   }
 }
 
-impl Resourcify for FileResource {
+impl ResourceContainer for FileResource {
   fn id(&self) -> ResourceId {
     self.id
   }

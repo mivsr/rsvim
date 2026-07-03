@@ -12,6 +12,8 @@ use child_process::ChildProcessStdinResource;
 use child_process::ChildProcessStdoutResource;
 use file::FileResource;
 use std::fmt::Debug;
+use std::sync::Arc;
+use std::sync::Mutex;
 use text_decoder::TextDecoderResource;
 
 // ResourceId start from 1.
@@ -19,6 +21,33 @@ use text_decoder::TextDecoderResource;
   Copy, Clone, rsvim_macro::IncrementalId, serde::Serialize, serde::Deserialize,
 )]
 pub struct ResourceId(#[start_from(1)] i32);
+
+#[derive_where::derive_where(Debug)]
+#[derive(Clone)]
+/// Resource container.
+pub struct ResourceContainer<T> {
+  id: ResourceId,
+
+  #[derive_where(skip)]
+  data: Arc<Mutex<T>>,
+}
+
+impl<T> ResourceContainer<T> {
+  pub fn new(data: T) -> Self {
+    Self {
+      id: ResourceId::next(),
+      data: Arc::new(Mutex::new(data)),
+    }
+  }
+
+  fn id(&self) -> ResourceId {
+    self.id
+  }
+
+  pub fn data(&self) -> Arc<Mutex<T>> {
+    self.data.clone()
+  }
+}
 
 #[derive(Debug, Clone)]
 pub enum Resource {
