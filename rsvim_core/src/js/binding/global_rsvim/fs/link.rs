@@ -19,7 +19,7 @@ pub fn fs_link_s(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   }
 }
 
-pub async fn fs_link_as(oldpath: &Path, newpath: &Path) -> TheResult<()> {
+pub async fn fs_link_a(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   match tokio::fs::hard_link(oldpath, newpath).await {
     Ok(_) => Ok(()),
     Err(e) => Err(TheErr::CreateLinkFailed(

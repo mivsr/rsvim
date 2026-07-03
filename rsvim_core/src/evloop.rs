@@ -18,7 +18,7 @@ use crate::hl::ColorSchemeManagerArc;
 use crate::js::JsRuntime;
 use crate::js::JsRuntimeOptions;
 use crate::js::SnapshotData;
-use crate::js::binding::global_rsvim::fs::link::fs_link_as;
+use crate::js::binding::global_rsvim::fs::link::fs_link_a;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
 use crate::js::binding::global_rsvim::fs::open::fs_open_as;
 use crate::js::binding::global_rsvim::fs::read::fs_read_s;
@@ -947,7 +947,7 @@ impl EventLoop {
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn(async move {
             let maybe_result =
-              fs_link_as(req.oldpath.as_path(), req.newpath.as_path()).await;
+              fs_link_a(req.oldpath.as_path(), req.newpath.as_path()).await;
             jsrt_forwarder_tx
               .send(JsMessage::FsLinkResp(chan::FsLinkResp {
                 task_id: req.task_id,
