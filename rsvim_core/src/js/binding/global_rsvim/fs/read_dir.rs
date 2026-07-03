@@ -3,14 +3,15 @@
 use crate::js::JsFuture;
 use crate::js::binding;
 use crate::prelude::*;
+use std::fs::ReadDir;
 
-pub fn fs_read_dir(path: &Path) -> TheResult<Vec<u8>> {
-  match std::fs::read(path) {
-    Ok(buf) => {
-      trace!("path:{:?},buf.len:{}", path, buf.len());
-      Ok(buf)
+pub fn fs_read_dir(path: &Path) -> TheResult<ReadDir> {
+  match std::fs::read_dir(path) {
+    Ok(rd) => {
+      trace!("path:{:?}", path);
+      Ok(rd)
     }
-    Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
+    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
   }
 }
 

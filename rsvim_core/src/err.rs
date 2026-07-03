@@ -102,6 +102,9 @@ pub enum TheErr {
   #[error("Failed to create directory `{0}`: {1}.")]
   CreateDirectoryFailed(PathBuf, IoErr),
 
+  #[error("Failed to read directory `{0}`: {1}.")]
+  ReadDirectoryFailed(PathBuf, IoErr),
+
   #[error("Invalid data.")]
   DataInvalid,
 
