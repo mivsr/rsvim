@@ -1,6 +1,5 @@
 //! Resource.
 
-pub mod child_process;
 pub mod file;
 pub mod read_dir;
 pub mod text_decoder;
@@ -48,6 +47,14 @@ impl<T> ResourceContainer<T> {
     self.data.clone()
   }
 }
+
+pub type ChildProcessResource = ResourceContainer<std::process::Child>;
+pub type ChildProcessStdinResource =
+  ResourceContainer<std::process::ChildStdin>;
+pub type ChildProcessStdoutResource =
+  ResourceContainer<std::process::ChildStdout>;
+pub type ChildProcessStderrResource =
+  ResourceContainer<std::process::ChildStderr>;
 
 #[derive(Debug, Clone)]
 pub enum Resource {
