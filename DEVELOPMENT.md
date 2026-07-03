@@ -19,7 +19,7 @@ Please setup your development environment with:
 - Configure git to force Unix style line ending LF (`\n`) instead of Windows style CRLF (`\r\n`):
   - Run `git config core.autocrlf false` to prevent from auto-converting LF to CRLF on checkout.
   - Run `git config core.eol crlf` to set default line ending style to LF.
-  - Run `git add --update --renormalize` to manually trigger a convertion from LF to CRLF in the repo.
+  - Run `git add --update --renormalize` to manually trigger a conversion from LF to CRLF in the repo.
 
 
 ## Rust
