@@ -20,8 +20,8 @@ use crate::js::JsRuntimeOptions;
 use crate::js::SnapshotData;
 use crate::js::binding::global_rsvim::fs::link::fs_link_as;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
-use crate::js::binding::global_rsvim::fs::open::async_fs_open;
-use crate::js::binding::global_rsvim::fs::read::fs_read;
+use crate::js::binding::global_rsvim::fs::open::fs_open_as;
+use crate::js::binding::global_rsvim::fs::read::fs_read_s;
 use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_as;
 use crate::js::binding::global_rsvim::fs::read_text_file::async_fs_read_text_file;
 use crate::js::binding::global_rsvim::fs::stat::async_fs_lstat;
@@ -817,8 +817,7 @@ impl EventLoop {
           let resource_table = self.resource_table.clone();
           self.detached_tracker.spawn(async move {
             let maybe_result =
-              async_fs_open(resource_table, req.path.as_path(), req.options)
-                .await;
+              fs_open_as(resource_table, req.path.as_path(), req.options).await;
             jsrt_forwarder_tx
               .send(JsMessage::FsOpenResp(chan::FsOpenResp {
                 task_id: req.task_id,
@@ -838,7 +837,7 @@ impl EventLoop {
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn(async move {
             let maybe_result =
-              fs_read(resource_table, req.file_rid, req.bufsize);
+              fs_read_s(resource_table, req.file_rid, req.bufsize);
             jsrt_forwarder_tx
               .send(JsMessage::FsReadResp(chan::FsReadResp {
                 task_id: req.task_id,
