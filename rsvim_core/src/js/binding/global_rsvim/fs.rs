@@ -23,8 +23,6 @@ use crate::js::binding::global_rsvim::fs::mkdir::FsMkdirOptions;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir;
 use crate::js::binding::global_rsvim::fs::read_dir::FsReadDirFuture;
 use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir;
-use crate::js::binding::global_rsvim::fs::read_file::FsReadFileFuture;
-use crate::js::binding::global_rsvim::fs::read_file::fs_read_file;
 use crate::js::binding::global_rsvim::fs::read_text_file::FsReadTextFileFuture;
 use crate::js::binding::global_rsvim::fs::read_text_file::fs_read_text_file;
 use crate::js::binding::global_rsvim::fs::stat::FsStatFuture;
@@ -39,77 +37,6 @@ use crate::js::resource::ResourceId;
 use crate::prelude::*;
 use itertools::Itertools;
 use std::str::FromStr;
-
-fn _read_dir_args<'s>(
-  scope: &mut v8::PinScope<'s, '_>,
-  args: v8::FunctionCallbackArguments<'s>,
-) -> String {
-  debug_assert!(args.length() == 1);
-  debug_assert!(is_v8_str!(args.get(0)));
-  let filename = args.get(0).to_rust_string_lossy(scope);
-  trace!("RsvimFs readDir filename:{:?}", filename);
-  filename
-}
-
-/// `Rsvim.fs.readDir` API.
-pub fn read_dir<'s>(
-  scope: &mut v8::PinScope<'s, '_>,
-  args: v8::FunctionCallbackArguments<'s>,
-  mut rv: v8::ReturnValue,
-) {
-  let filename = _read_dir_args(scope, args);
-
-  let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
-  let promise = promise_resolver.get_promise(scope);
-
-  let state_rc = JsRuntime::state(scope);
-  let read_cb = {
-    let promise = v8::Global::new(scope, promise_resolver);
-    let state_rc = state_rc.clone();
-    move |maybe_result: Option<TheResult<Vec<u8>>>| {
-      let fut = FsReadDirFuture {
-        promise: promise.clone(),
-        maybe_result,
-      };
-      let mut state = state_rc.borrow_mut();
-      state.pending_futures.push(Box::new(fut));
-    }
-  };
-
-  let mut state = state_rc.borrow_mut();
-  let task_id = js::TaskId::next();
-  pending::create_fs_read_dir(
-    &mut state,
-    task_id,
-    Path::new(&filename),
-    Box::new(read_cb),
-  );
-
-  rv.set(promise.into());
-}
-
-/// `Rsvim.fs.readDirSync` API.
-pub fn read_dir_sync<'s>(
-  scope: &mut v8::PinScope<'s, '_>,
-  args: v8::FunctionCallbackArguments<'s>,
-  mut rv: v8::ReturnValue,
-) {
-  let filename = _read_dir_args(scope, args);
-
-  let state_rc = JsRuntime::state(scope);
-  let resource_table = state_rc.borrow().resource_table.clone();
-
-  match fs_read_dir(resource_table, Path::new(&filename)) {
-    Ok(rd_rid) => {
-      let rd_rid = Into::<i32>::into(rd_rid);
-      let rd_rid = rd_rid.to_v8(scope);
-      rv.set(rd_rid);
-    }
-    Err(e) => {
-      binding::throw_exception(scope, &e);
-    }
-  }
-}
 
 fn _read_text_file_args<'s>(
   scope: &mut v8::PinScope<'s, '_>,

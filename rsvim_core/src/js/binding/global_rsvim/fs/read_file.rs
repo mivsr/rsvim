@@ -1,7 +1,11 @@
 //! Read file APIs.
 
+use crate::is_v8_str;
+use crate::js;
 use crate::js::JsFuture;
+use crate::js::JsRuntime;
 use crate::js::binding;
+use crate::js::pending;
 use crate::prelude::*;
 
 pub fn fs_read_file(path: &Path) -> TheResult<Vec<u8>> {
