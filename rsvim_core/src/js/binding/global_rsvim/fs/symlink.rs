@@ -33,7 +33,7 @@ pub enum FsSymlinkOptions {
 }
 
 #[cfg(target_family = "unix")]
-pub fn fs_symlink(
+pub fn fs_symlink_s(
   oldpath: &Path,
   newpath: &Path,
   _options: FsSymlinkOptions,
@@ -49,7 +49,7 @@ pub fn fs_symlink(
 }
 
 #[cfg(target_family = "windows")]
-pub fn fs_symlink(
+pub fn fs_symlink_s(
   oldpath: &Path,
   newpath: &Path,
   options: FsSymlinkOptions,
@@ -192,7 +192,7 @@ pub fn symlink_sync<'s>(
 ) {
   let (oldpath, newpath, options) = _get_args(scope, args);
 
-  match fs_symlink(Path::new(&oldpath), Path::new(&newpath), options) {
+  match fs_symlink_s(Path::new(&oldpath), Path::new(&newpath), options) {
     Ok(_) => rv.set_undefined(),
     Err(e) => {
       binding::throw_exception(scope, &e);

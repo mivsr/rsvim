@@ -31,3 +31,5 @@ pub use stat::lstat_async;
 pub use stat::lstat_sync;
 pub use stat::stat_async;
 pub use stat::stat_sync;
+pub use symlink::symlink_async;
+pub use symlink::symlink_sync;
