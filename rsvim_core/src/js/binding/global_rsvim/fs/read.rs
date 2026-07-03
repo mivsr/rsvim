@@ -101,7 +101,7 @@ fn _get_args<'s>(
 }
 
 /// `File.read` API.
-pub fn read<'s>(
+pub fn read_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
