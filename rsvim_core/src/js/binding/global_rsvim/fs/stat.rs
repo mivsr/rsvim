@@ -162,7 +162,7 @@ fn convert_metadata_to_fileinfo(meta: Metadata) -> FsFileInfo {
 }
 
 // lstat doesn't follow symlink
-pub fn fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
+pub fn sync_fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
   match std::fs::symlink_metadata(path) {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -281,7 +281,7 @@ pub fn lstat_sync<'s>(
 ) {
   let filename = _get_args(scope, args);
 
-  match fs_lstat(Path::new(&filename)) {
+  match sync_fs_lstat(Path::new(&filename)) {
     Ok(info) => {
       let info = info.to_v8(scope);
       rv.set(info);
