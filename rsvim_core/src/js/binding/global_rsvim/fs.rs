@@ -17,3 +17,5 @@ pub use link::link_async;
 pub use link::link_sync;
 pub use mkdir::mkdir_async;
 pub use mkdir::mkdir_sync;
+pub use open::open_async;
+pub use open::open_sync;
