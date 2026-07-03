@@ -19,7 +19,7 @@ use crate::js::JsRuntime;
 use crate::js::JsRuntimeOptions;
 use crate::js::SnapshotData;
 use crate::js::binding::global_rsvim::fs::link::fs_link_as;
-use crate::js::binding::global_rsvim::fs::mkdir::sync_fs_mkdir;
+use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
 use crate::js::binding::global_rsvim::fs::open::async_fs_open;
 use crate::js::binding::global_rsvim::fs::read::fs_read;
 use crate::js::binding::global_rsvim::fs::read_file::async_fs_read_file;
@@ -964,7 +964,7 @@ impl EventLoop {
           trace!("Recv FsMkdirReq:{:?}", req.task_id);
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn_blocking(move || {
-            let maybe_result = sync_fs_mkdir(req.path.as_path(), req.options);
+            let maybe_result = fs_mkdir_s(req.path.as_path(), req.options);
             jsrt_forwarder_tx
               .send(JsMessage::FsMkdirResp(chan::FsMkdirResp {
                 task_id: req.task_id,
