@@ -144,6 +144,15 @@ impl ResourceTable {
     rid
   }
 
+  pub fn add_read_dir(&mut self, data: std::fs::ReadDir) -> ResourceId {
+    let res = ReadDirResource::new(data);
+    let rid = res.id();
+    self
+      .resources
+      .insert(res.id(), Resource::ReadDirResource(res));
+    rid
+  }
+
   pub fn get(&self, rid: &ResourceId) -> Option<&Resource> {
     self.resources.get(rid)
   }
