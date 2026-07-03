@@ -2,37 +2,46 @@
 
 use crate::js::JsFuture;
 use crate::js::binding;
+use crate::js::converter::*;
+use crate::js::resource::ResourceId;
+use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 use std::fs::ReadDir;
 
-pub fn fs_read_dir(path: &Path) -> TheResult<ReadDir> {
+pub fn fs_read_dir(
+  resource_table: ResourceTableArc,
+  path: &Path,
+) -> TheResult<ResourceId> {
   match std::fs::read_dir(path) {
     Ok(rd) => {
-      trace!("path:{:?}", path);
-      Ok(rd)
+      let mut resource_table = lock!(resource_table);
+      Ok(resource_table.add_read_dir(rd))
     }
     Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
   }
 }
 
-pub async fn async_fs_read_file(path: &Path) -> TheResult<Vec<u8>> {
-  match tokio::fs::read(path).await {
-    Ok(buf) => {
-      trace!("path:{:?},buf.len:{}", path, buf.len());
-      Ok(buf)
+pub async fn async_fs_read_dir(
+  resource_table: ResourceTableArc,
+  path: &Path,
+) -> TheResult<ResourceId> {
+  match tokio::fs::read_dir(path).await {
+    Ok(rd) => {
+      let mut resource_table = lock!(resource_table);
+      Ok(resource_table.add_read_dir(rd))
     }
-    Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
+    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
   }
 }
 
-pub struct FsReadFileFuture {
+pub struct FsReadDirFuture {
   pub promise: v8::Global<v8::PromiseResolver>,
   pub maybe_result: Option<TheResult<Vec<u8>>>,
 }
 
-impl JsFuture for FsReadFileFuture {
+impl JsFuture for FsReadDirFuture {
   fn run(&mut self, scope: &mut v8::PinScope) {
-    trace!("|FsReadFileFuture|");
+    trace!("|FsReadDirFuture|");
 
     let result = self.maybe_result.take().unwrap();
 
@@ -46,16 +55,15 @@ impl JsFuture for FsReadFileFuture {
     }
 
     // Otherwise, resolve the promise passing the result.
-    let data = result.unwrap();
-    trace!("FsReadFileFuture data.len:{}, data:{:?}", data.len(), data);
-    let buf = v8::ArrayBuffer::new(scope, data.len());
-    let buffer_store = buf.get_backing_store();
+    let result = result.unwrap();
+    let readdir_rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
+    let readdir_rid = Into::<i32>::into(readdir_rid);
+    let readdir_rid = readdir_rid.to_v8(scope);
 
-    // Copy the slice's bytes into v8's typed-array backing store.
-    for (i, b) in data.iter().enumerate() {
-      buffer_store[i].set(*b);
-    }
-
-    self.promise.open(scope).resolve(scope, buf.into()).unwrap();
+    self
+      .promise
+      .open(scope)
+      .resolve(scope, readdir_rid)
+      .unwrap();
   }
 }
