@@ -24,8 +24,8 @@ use crate::js::binding::global_rsvim::fs::open::fs_open_a;
 use crate::js::binding::global_rsvim::fs::read::fs_read_s;
 use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_a;
 use crate::js::binding::global_rsvim::fs::read_text_file::fs_read_text_file_a;
-use crate::js::binding::global_rsvim::fs::stat::fs_lstat_as;
-use crate::js::binding::global_rsvim::fs::stat::fs_stat_as;
+use crate::js::binding::global_rsvim::fs::stat::fs_lstat_a;
+use crate::js::binding::global_rsvim::fs::stat::fs_stat_a;
 use crate::js::binding::global_rsvim::fs::symlink::fs_symlink_s;
 use crate::js::binding::global_rsvim::fs::write::fs_write_s;
 use crate::js::command::CommandManager;
@@ -905,9 +905,9 @@ impl EventLoop {
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn(async move {
             let maybe_result = if req.follow_symlink {
-              fs_stat_as(req.path.as_path()).await
+              fs_stat_a(req.path.as_path()).await
             } else {
-              fs_lstat_as(req.path.as_path()).await
+              fs_lstat_a(req.path.as_path()).await
             };
             jsrt_forwarder_tx
               .send(JsMessage::FsStatResp(chan::FsStatResp {

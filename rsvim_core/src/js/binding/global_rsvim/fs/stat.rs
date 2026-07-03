@@ -170,7 +170,7 @@ pub fn fs_lstat_s(path: &Path) -> TheResult<FsFileInfo> {
 }
 
 // lstat doesn't follow symlink
-pub async fn fs_lstat_as(path: &Path) -> TheResult<FsFileInfo> {
+pub async fn fs_lstat_a(path: &Path) -> TheResult<FsFileInfo> {
   match tokio::fs::symlink_metadata(path).await {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -186,7 +186,7 @@ pub fn fs_stat_s(path: &Path) -> TheResult<FsFileInfo> {
 }
 
 // stat follows symlink
-pub async fn fs_stat_as(path: &Path) -> TheResult<FsFileInfo> {
+pub async fn fs_stat_a(path: &Path) -> TheResult<FsFileInfo> {
   match tokio::fs::metadata(path).await {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
