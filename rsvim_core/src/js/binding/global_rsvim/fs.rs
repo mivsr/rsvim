@@ -27,3 +27,7 @@ pub use read_file::read_file_async;
 pub use read_file::read_file_sync;
 pub use read_text_file::read_text_file_async;
 pub use read_text_file::read_text_file_sync;
+pub use stat::lstat_async;
+pub use stat::lstat_sync;
+pub use stat::stat_async;
+pub use stat::stat_sync;

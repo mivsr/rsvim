@@ -162,7 +162,7 @@ fn convert_metadata_to_fileinfo(meta: Metadata) -> FsFileInfo {
 }
 
 // lstat doesn't follow symlink
-pub fn sync_fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
+pub fn fs_lstat_s(path: &Path) -> TheResult<FsFileInfo> {
   match std::fs::symlink_metadata(path) {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -170,7 +170,7 @@ pub fn sync_fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
 }
 
 // lstat doesn't follow symlink
-pub async fn async_fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
+pub async fn fs_lstat_as(path: &Path) -> TheResult<FsFileInfo> {
   match tokio::fs::symlink_metadata(path).await {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -178,7 +178,7 @@ pub async fn async_fs_lstat(path: &Path) -> TheResult<FsFileInfo> {
 }
 
 // stat follows symlink
-pub fn fs_stat(path: &Path) -> TheResult<FsFileInfo> {
+pub fn fs_stat_s(path: &Path) -> TheResult<FsFileInfo> {
   match std::fs::metadata(path) {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -186,7 +186,7 @@ pub fn fs_stat(path: &Path) -> TheResult<FsFileInfo> {
 }
 
 // stat follows symlink
-pub async fn async_fs_stat(path: &Path) -> TheResult<FsFileInfo> {
+pub async fn fs_stat_as(path: &Path) -> TheResult<FsFileInfo> {
   match tokio::fs::metadata(path).await {
     Ok(meta) => Ok(convert_metadata_to_fileinfo(meta)),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
@@ -281,7 +281,7 @@ pub fn lstat_sync<'s>(
 ) {
   let filename = _get_args(scope, args);
 
-  match sync_fs_lstat(Path::new(&filename)) {
+  match fs_lstat_s(Path::new(&filename)) {
     Ok(info) => {
       let info = info.to_v8(scope);
       rv.set(info);
@@ -338,7 +338,7 @@ pub fn stat_sync<'s>(
 ) {
   let filename = _get_args(scope, args);
 
-  match fs_stat(Path::new(&filename)) {
+  match fs_stat_s(Path::new(&filename)) {
     Ok(info) => {
       let info = info.to_v8(scope);
       rv.set(info);
