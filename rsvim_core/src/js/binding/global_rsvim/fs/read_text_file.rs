@@ -15,7 +15,7 @@ pub fn fs_read_text_file_s(path: &Path) -> TheResult<String> {
   }
 }
 
-pub async fn fs_read_text_file_as(path: &Path) -> TheResult<String> {
+pub async fn fs_read_text_file_a(path: &Path) -> TheResult<String> {
   match tokio::fs::read_to_string(path).await {
     Ok(buf) => Ok(buf),
     Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
