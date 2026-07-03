@@ -42,14 +42,10 @@ impl JsFuture for FsReadDirFuture {
 
     // Otherwise, resolve the promise passing the result.
     let result = result.unwrap();
-    let readdir_rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
-    let readdir_rid = Into::<i32>::into(readdir_rid);
-    let readdir_rid = readdir_rid.to_v8(scope);
+    let rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
+    let rid = Into::<i32>::into(rid);
+    let rid = rid.to_v8(scope);
 
-    self
-      .promise
-      .open(scope)
-      .resolve(scope, readdir_rid)
-      .unwrap();
+    self.promise.open(scope).resolve(scope, rid).unwrap();
   }
 }

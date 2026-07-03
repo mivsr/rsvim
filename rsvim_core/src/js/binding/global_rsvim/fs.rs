@@ -28,6 +28,8 @@ use crate::js::binding::global_rsvim::fs::open::FsOpenOptions;
 use crate::js::binding::global_rsvim::fs::open::fs_open;
 use crate::js::binding::global_rsvim::fs::read::FsReadFuture;
 use crate::js::binding::global_rsvim::fs::read::fs_read;
+use crate::js::binding::global_rsvim::fs::read_dir::FsReadDirFuture;
+use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir;
 use crate::js::binding::global_rsvim::fs::read_file::FsReadFileFuture;
 use crate::js::binding::global_rsvim::fs::read_file::fs_read_file;
 use crate::js::binding::global_rsvim::fs::read_text_file::FsReadTextFileFuture;
@@ -398,7 +400,7 @@ pub fn read_dir<'s>(
     let promise = v8::Global::new(scope, promise_resolver);
     let state_rc = state_rc.clone();
     move |maybe_result: Option<TheResult<Vec<u8>>>| {
-      let fut = FsReadFileFuture {
+      let fut = FsReadDirFuture {
         promise: promise.clone(),
         maybe_result,
       };
@@ -425,19 +427,16 @@ pub fn read_dir_sync<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _read_file_args(scope, args);
+  let filename = _read_dir_args(scope, args);
 
-  match fs_read_file(Path::new(&filename)) {
-    Ok(data) => {
-      let buf = v8::ArrayBuffer::new(scope, data.len());
-      let buffer_store = buf.get_backing_store();
+  let state_rc = JsRuntime::state(scope);
+  let resource_table = state_rc.borrow().resource_table.clone();
 
-      // Copy the slice's bytes into v8's typed-array backing store.
-      for (i, b) in data.iter().enumerate() {
-        buffer_store[i].set(*b);
-      }
-
-      rv.set(buf.into());
+  match fs_read_dir(resource_table, Path::new(&filename)) {
+    Ok(rd_rid) => {
+      let rd_rid = Into::<i32>::into(rd_rid);
+      let rd_rid = rd_rid.to_v8(scope);
+      rv.set(rd_rid);
     }
     Err(e) => {
       binding::throw_exception(scope, &e);
