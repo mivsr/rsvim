@@ -5,10 +5,8 @@ use crate::js;
 use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
-use crate::js::converter::*;
 use crate::js::pending;
 use crate::prelude::*;
-use std::str::FromStr;
 
 pub fn sync_fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   match std::fs::hard_link(oldpath, newpath) {
