@@ -236,7 +236,7 @@ fn _get_args<'s>(
 }
 
 /// `Rsvim.fs.lstat` API.
-pub fn lstat<'s>(
+pub fn lstat_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
@@ -293,7 +293,7 @@ pub fn lstat_sync<'s>(
 }
 
 /// `Rsvim.fs.stat` API.
-pub fn stat<'s>(
+pub fn stat_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
