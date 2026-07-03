@@ -411,7 +411,7 @@ pub fn read_dir<'s>(
 
   let mut state = state_rc.borrow_mut();
   let task_id = js::TaskId::next();
-  pending::create_fs_read_file(
+  pending::create_fs_read_dir(
     &mut state,
     task_id,
     Path::new(&filename),
