@@ -12,7 +12,7 @@ use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 
-pub fn fs_read(
+pub fn fs_read_s(
   resource_table: ResourceTableArc,
   rid: ResourceId,
   bufsize: usize,
@@ -151,7 +151,7 @@ pub fn read_sync<'s>(
   let state_rc = JsRuntime::state(scope);
   let resource_table = state_rc.borrow().resource_table.clone();
 
-  match fs_read(resource_table, file_rid, buf.byte_length()) {
+  match fs_read_s(resource_table, file_rid, buf.byte_length()) {
     Ok(data) => {
       let buffer_store = buf.get_backing_store();
       for (i, b) in data.iter().enumerate() {

@@ -19,3 +19,5 @@ pub use mkdir::mkdir_async;
 pub use mkdir::mkdir_sync;
 pub use open::open_async;
 pub use open::open_sync;
+pub use read::read_async;
+pub use read::read_sync;
