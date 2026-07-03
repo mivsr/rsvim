@@ -12,15 +12,6 @@ pub mod stat;
 pub mod symlink;
 pub mod write;
 
-use crate::is_v8_str;
-use crate::js;
-use crate::js::JsRuntime;
-use crate::js::binding;
-use crate::js::binding::global_rsvim::fs::mkdir::FsMkdirFuture;
-use crate::js::binding::global_rsvim::fs::mkdir::FsMkdirOptions;
-use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir;
-use crate::js::converter::*;
-use crate::js::pending;
-use crate::prelude::*;
-use std::str::FromStr;
-
+pub use close::close_sync;
+pub use link::link_async;
+pub use link::link_sync;
