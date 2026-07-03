@@ -22,7 +22,7 @@ use crate::js::binding::global_rsvim::fs::link::fs_link_as;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
 use crate::js::binding::global_rsvim::fs::open::async_fs_open;
 use crate::js::binding::global_rsvim::fs::read::fs_read;
-use crate::js::binding::global_rsvim::fs::read_file::async_fs_read_file;
+use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_as;
 use crate::js::binding::global_rsvim::fs::read_text_file::async_fs_read_text_file;
 use crate::js::binding::global_rsvim::fs::stat::async_fs_lstat;
 use crate::js::binding::global_rsvim::fs::stat::async_fs_stat;
@@ -870,7 +870,7 @@ impl EventLoop {
           trace!("Recv FsReadFileReq:{:?}", req.task_id);
           let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
           self.detached_tracker.spawn(async move {
-            let maybe_result = async_fs_read_file(req.path.as_path()).await;
+            let maybe_result = fs_read_file_as(req.path.as_path()).await;
             jsrt_forwarder_tx
               .send(JsMessage::FsReadFileResp(chan::FsReadFileResp {
                 task_id: req.task_id,
