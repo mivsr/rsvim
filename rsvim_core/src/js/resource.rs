@@ -20,11 +20,6 @@ use text_decoder::TextDecoderResource;
 )]
 pub struct ResourceId(#[start_from(1)] i32);
 
-/// Resourcify
-pub trait Resourcify: Sized + Debug + Clone {
-  fn id(&self) -> ResourceId;
-}
-
 #[derive(Debug, Clone)]
 pub enum Resource {
   File(FileResource),
@@ -33,19 +28,6 @@ pub enum Resource {
   ChildProcessStdin(ChildProcessStdinResource),
   ChildProcessStdout(ChildProcessStdoutResource),
   ChildProcessStderr(ChildProcessStderrResource),
-}
-
-impl Resourcify for Resource {
-  fn id(&self) -> ResourceId {
-    match self {
-      Resource::File(r) => r.id(),
-      Resource::TextDecoder(r) => r.id(),
-      Resource::ChildProcess(r) => r.id(),
-      Resource::ChildProcessStdin(r) => r.id(),
-      Resource::ChildProcessStdout(r) => r.id(),
-      Resource::ChildProcessStderr(r) => r.id(),
-    }
-  }
 }
 
 #[derive(Debug, rsvim_macro::ArcMutexPtr)]
