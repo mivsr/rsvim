@@ -11,7 +11,7 @@ Please setup your development environment with:
 - Install [mise](https://github.com/jdx/mise), then run `mise i` and `npm i`.
 - (Optional) Faster linker for linux, install [clang](https://llvm.org/), [mold](https://github.com/rui314/mold)/[wild](https://github.com/davidlattimore/wild).
 
-## Git Repository
+## Repository
 
 - Initialize [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
   - Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
