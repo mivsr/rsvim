@@ -2,6 +2,7 @@
 
 use crate::js::resource::ResourceId;
 use crate::js::resource::Resourcify;
+use std::fs::ReadDir;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -10,18 +11,18 @@ use std::sync::Mutex;
 pub struct ReadDirResource {
   id: ResourceId,
   #[derive_where(skip)]
-  data: Arc<Mutex<std::fs::File>>,
+  data: Arc<Mutex<ReadDir>>,
 }
 
 impl ReadDirResource {
-  pub fn new(data: std::fs::File) -> Self {
+  pub fn new(data: ReadDir) -> Self {
     Self {
       id: ResourceId::next(),
       data: Arc::new(Mutex::new(data)),
     }
   }
 
-  pub fn data(&self) -> Arc<Mutex<std::fs::File>> {
+  pub fn data(&self) -> Arc<Mutex<ReadDir>> {
     self.data.clone()
   }
 }
