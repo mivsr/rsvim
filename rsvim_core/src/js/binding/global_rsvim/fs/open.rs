@@ -42,7 +42,7 @@ pub struct FsOpenOptions {
   pub write: bool,
 }
 
-fn fs_open(
+pub fn fs_open(
   resource_table: ResourceTableArc,
   path: &Path,
   opts: FsOpenOptions,
