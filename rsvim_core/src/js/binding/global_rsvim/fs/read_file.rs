@@ -8,7 +8,7 @@ use crate::js::binding;
 use crate::js::pending;
 use crate::prelude::*;
 
-pub fn fs_read_file(path: &Path) -> TheResult<Vec<u8>> {
+pub fn sync_fs_read_file(path: &Path) -> TheResult<Vec<u8>> {
   match std::fs::read(path) {
     Ok(buf) => {
       trace!("path:{:?},buf.len:{}", path, buf.len());
@@ -119,7 +119,7 @@ pub fn read_file_sync<'s>(
 ) {
   let filename = _get_args(scope, args);
 
-  match fs_read_file(Path::new(&filename)) {
+  match sync_fs_read_file(Path::new(&filename)) {
     Ok(data) => {
       let buf = v8::ArrayBuffer::new(scope, data.len());
       let buffer_store = buf.get_backing_store();
