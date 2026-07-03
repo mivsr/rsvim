@@ -224,14 +224,14 @@ impl JsFuture for FsStatFuture {
   }
 }
 
-fn _lstat_args<'s>(
+fn _get_args<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
 ) -> String {
   debug_assert!(args.length() == 1);
   debug_assert!(is_v8_str!(args.get(0)));
   let filename = args.get(0).to_rust_string_lossy(scope);
-  trace!("RsvimFs lstat filename:{:?}", filename);
+  trace!("RsvimFs lstat/stat filename:{:?}", filename);
   filename
 }
 
@@ -241,7 +241,7 @@ pub fn lstat<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _lstat_args(scope, args);
+  let filename = _get_args(scope, args);
 
   let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
   let promise = promise_resolver.get_promise(scope);
@@ -279,7 +279,7 @@ pub fn lstat_sync<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _lstat_args(scope, args);
+  let filename = _get_args(scope, args);
 
   match fs_lstat(Path::new(&filename)) {
     Ok(info) => {
@@ -292,24 +292,13 @@ pub fn lstat_sync<'s>(
   }
 }
 
-fn _stat_args<'s>(
-  scope: &mut v8::PinScope<'s, '_>,
-  args: v8::FunctionCallbackArguments<'s>,
-) -> String {
-  debug_assert!(args.length() == 1);
-  debug_assert!(is_v8_str!(args.get(0)));
-  let filename = args.get(0).to_rust_string_lossy(scope);
-  trace!("RsvimFs stat filename:{:?}", filename);
-  filename
-}
-
 /// `Rsvim.fs.stat` API.
 pub fn stat<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _stat_args(scope, args);
+  let filename = _get_args(scope, args);
 
   let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
   let promise = promise_resolver.get_promise(scope);
@@ -347,7 +336,7 @@ pub fn stat_sync<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _stat_args(scope, args);
+  let filename = _get_args(scope, args);
 
   match fs_stat(Path::new(&filename)) {
     Ok(info) => {
