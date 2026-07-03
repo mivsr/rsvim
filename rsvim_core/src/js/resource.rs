@@ -2,6 +2,7 @@
 
 pub mod child_process;
 pub mod file;
+pub mod read_dir;
 pub mod text_decoder;
 
 use crate::prelude::*;
