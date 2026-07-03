@@ -10,7 +10,7 @@ use crate::js::pending;
 use crate::prelude::*;
 use std::str::FromStr;
 
-pub fn fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
+pub fn sync_fs_link(oldpath: &Path, newpath: &Path) -> TheResult<()> {
   match std::fs::hard_link(oldpath, newpath) {
     Ok(_) => Ok(()),
     Err(e) => Err(TheErr::CreateLinkFailed(
@@ -82,7 +82,7 @@ fn _get_args<'s>(
 }
 
 /// `Rsvim.fs.link` API.
-pub fn link<'s>(
+pub fn link_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
@@ -127,7 +127,7 @@ pub fn link_sync<'s>(
 ) {
   let (oldpath, newpath) = _get_args(scope, args);
 
-  match fs_link(Path::new(&oldpath), Path::new(&newpath)) {
+  match sync_fs_link(Path::new(&oldpath), Path::new(&newpath)) {
     Ok(_) => rv.set_undefined(),
     Err(e) => {
       binding::throw_exception(scope, &e);
