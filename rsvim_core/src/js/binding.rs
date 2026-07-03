@@ -155,6 +155,18 @@ pub fn create_new_context<'s, 'b>(
     set_function_to(scope, vim, "fs_close", global_rsvim::fs::close_sync);
     set_function_to(scope, vim, "fs_read", global_rsvim::fs::read_async);
     set_function_to(scope, vim, "fs_read_sync", global_rsvim::fs::read_sync);
+    set_function_to(
+      scope,
+      vim,
+      "fs_read_dir",
+      global_rsvim::fs::read_dir_async,
+    );
+    set_function_to(
+      scope,
+      vim,
+      "fs_read_dir_sync",
+      global_rsvim::fs::read_dir_sync,
+    );
     set_function_to(scope, vim, "fs_write", global_rsvim::fs::write_async);
     set_function_to(scope, vim, "fs_write_sync", global_rsvim::fs::write_sync);
     set_function_to(
