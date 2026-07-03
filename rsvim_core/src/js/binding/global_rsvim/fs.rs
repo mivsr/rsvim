@@ -371,6 +371,70 @@ pub fn read_file_sync<'s>(
   }
 }
 
+
+/// `Rsvim.fs.readDir` API.
+pub fn read_dir<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _read_file_args(scope, args);
+
+  let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
+  let promise = promise_resolver.get_promise(scope);
+
+  let state_rc = JsRuntime::state(scope);
+  let read_cb = {
+    let promise = v8::Global::new(scope, promise_resolver);
+    let state_rc = state_rc.clone();
+    move |maybe_result: Option<TheResult<Vec<u8>>>| {
+      let fut = FsReadFileFuture {
+        promise: promise.clone(),
+        maybe_result,
+      };
+      let mut state = state_rc.borrow_mut();
+      state.pending_futures.push(Box::new(fut));
+    }
+  };
+
+  let mut state = state_rc.borrow_mut();
+  let task_id = js::TaskId::next();
+  pending::create_fs_read_file(
+    &mut state,
+    task_id,
+    Path::new(&filename),
+    Box::new(read_cb),
+  );
+
+  rv.set(promise.into());
+}
+
+/// `Rsvim.fs.readDirSync` API.
+pub fn read_dir_sync<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let filename = _read_file_args(scope, args);
+
+  match fs_read_file(Path::new(&filename)) {
+    Ok(data) => {
+      let buf = v8::ArrayBuffer::new(scope, data.len());
+      let buffer_store = buf.get_backing_store();
+
+      // Copy the slice's bytes into v8's typed-array backing store.
+      for (i, b) in data.iter().enumerate() {
+        buffer_store[i].set(*b);
+      }
+
+      rv.set(buf.into());
+    }
+    Err(e) => {
+      binding::throw_exception(scope, &e);
+    }
+  }
+}
+
 fn _read_text_file_args<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
@@ -786,3 +850,4 @@ pub fn mkdir_sync<'s>(
     }
   }
 }
+
