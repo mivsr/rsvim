@@ -6,11 +6,8 @@ use crate::js::converter::*;
 use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
-use crate::prelude::*;
-use itertools::Itertools;
-use std::str::FromStr;
 
-pub fn fs_close(resource_table: ResourceTableArc, rid: ResourceId) {
+fn fs_close(resource_table: ResourceTableArc, rid: ResourceId) {
   let mut resource_table = lock!(resource_table);
   let mut handle = resource_table.remove(&rid);
   debug_assert!(handle.is_some());
@@ -19,7 +16,7 @@ pub fn fs_close(resource_table: ResourceTableArc, rid: ResourceId) {
 }
 
 /// `Rsvim.fs.close` API.
-pub fn close<'s>(
+pub fn close_sync<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut _rv: v8::ReturnValue,
