@@ -18,7 +18,7 @@ pub fn fs_read_file_s(path: &Path) -> TheResult<Vec<u8>> {
   }
 }
 
-pub async fn fs_read_file_as(path: &Path) -> TheResult<Vec<u8>> {
+pub async fn fs_read_file_a(path: &Path) -> TheResult<Vec<u8>> {
   match tokio::fs::read(path).await {
     Ok(buf) => {
       trace!("path:{:?},buf.len:{}", path, buf.len());
