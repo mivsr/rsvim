@@ -1,6 +1,6 @@
 # Development
 
-## Requirements
+## Compiler
 
 Please setup your development environment with:
 
@@ -11,10 +11,15 @@ Please setup your development environment with:
 - Install [mise](https://github.com/jdx/mise), then run `mise i` and `npm i`.
 - (Optional) Faster linker for linux, install [clang](https://llvm.org/), [mold](https://github.com/rui314/mold)/[wild](https://github.com/davidlattimore/wild).
 
-You need to clone [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
+## Git Repository
 
-- Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
-- Run `cd tests_and_benchmarks && git submodule update --init && cd ..` to initialize submodules inside it.
+- Clone [`tests_and_benchmarks`](https://github.com/rsvim/tests_and_benchmarks) repo for testing with below commands (in `rsvim` project):
+  - Run `git clone --depth=1 https://github.com/mivsr/tests_and_benchmarks` to clone the repo.
+  - Run `cd tests_and_benchmarks && git submodule update --init && cd ..` to initialize submodules inside it.
+- Configure git to force Unix style line ending LF (`\n`) instead of Windows style CRLF (`\r\n`):
+  - Run `git config --global core.autocrlf false` to prevent from auto-converting LF to CRLF on checkout.
+  - Run `git config --global core.eol lf` to set default line ending style to LF.
+
 
 ## Rust
 
