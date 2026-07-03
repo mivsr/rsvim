@@ -17,7 +17,7 @@ use crate::js;
 use crate::js::JsRuntime;
 use crate::js::binding;
 use crate::js::binding::global_rsvim::fs::link::FsLinkFuture;
-use crate::js::binding::global_rsvim::fs::link::fs_link;
+use crate::js::binding::global_rsvim::fs::link::sync_fs_link;
 use crate::js::binding::global_rsvim::fs::mkdir::FsMkdirFuture;
 use crate::js::binding::global_rsvim::fs::mkdir::FsMkdirOptions;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir;
