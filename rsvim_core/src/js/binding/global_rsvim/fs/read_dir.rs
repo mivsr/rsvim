@@ -1,35 +1,37 @@
-//! Read Text file APIs.
+//! Read directory APIs.
 
 use crate::is_v8_str;
 use crate::js;
 use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
+use crate::js::converter::*;
 use crate::js::pending;
+use crate::js::resource::ResourceId;
+use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 
-pub fn fs_read_text_file_s(path: &Path) -> TheResult<String> {
-  match std::fs::read_to_string(path) {
-    Ok(buf) => Ok(buf),
-    Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
+pub fn fs_read_dir_s(
+  resource_table: ResourceTableArc,
+  path: &Path,
+) -> TheResult<ResourceId> {
+  match std::fs::read_dir(path) {
+    Ok(rd) => {
+      let mut resource_table = lock!(resource_table);
+      Ok(resource_table.add_read_dir(rd))
+    }
+    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
   }
 }
 
-pub async fn fs_read_text_file_a(path: &Path) -> TheResult<String> {
-  match tokio::fs::read_to_string(path).await {
-    Ok(buf) => Ok(buf),
-    Err(e) => Err(TheErr::ReadFileByPathFailed(path.to_path_buf(), e)),
-  }
-}
-
-pub struct FsReadTextFileFuture {
+pub struct FsReadDirFuture {
   pub promise: v8::Global<v8::PromiseResolver>,
   pub maybe_result: Option<TheResult<Vec<u8>>>,
 }
 
-impl JsFuture for FsReadTextFileFuture {
+impl JsFuture for FsReadDirFuture {
   fn run(&mut self, scope: &mut v8::PinScope) {
-    trace!("|FsReadTextFileFuture|");
+    trace!("|FsReadDirFuture|");
 
     let result = self.maybe_result.take().unwrap();
 
@@ -44,15 +46,11 @@ impl JsFuture for FsReadTextFileFuture {
 
     // Otherwise, resolve the promise passing the result.
     let result = result.unwrap();
-    // Deserialize bytes into string.
-    let data = postcard::from_bytes::<String>(&result).unwrap();
-    let data = v8::String::new(scope, &data).unwrap();
+    let rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
+    let rid = Into::<i32>::into(rid);
+    let rid = rid.to_v8(scope);
 
-    self
-      .promise
-      .open(scope)
-      .resolve(scope, data.into())
-      .unwrap();
+    self.promise.open(scope).resolve(scope, rid).unwrap();
   }
 }
 
@@ -63,12 +61,12 @@ fn _get_args<'s>(
   debug_assert!(args.length() == 1);
   debug_assert!(is_v8_str!(args.get(0)));
   let filename = args.get(0).to_rust_string_lossy(scope);
-  trace!("RsvimFs readTextFile filename:{:?}", filename);
+  trace!("RsvimFs readDir filename:{:?}", filename);
   filename
 }
 
-/// `Rsvim.fs.readTextFile` API.
-pub fn read_text_file_async<'s>(
+/// `Rsvim.fs.readDir` API.
+pub fn read_dir_async<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
@@ -83,7 +81,7 @@ pub fn read_text_file_async<'s>(
     let promise = v8::Global::new(scope, promise_resolver);
     let state_rc = state_rc.clone();
     move |maybe_result: Option<TheResult<Vec<u8>>>| {
-      let fut = FsReadTextFileFuture {
+      let fut = FsReadDirFuture {
         promise: promise.clone(),
         maybe_result,
       };
@@ -94,7 +92,7 @@ pub fn read_text_file_async<'s>(
 
   let mut state = state_rc.borrow_mut();
   let task_id = js::TaskId::next();
-  pending::create_fs_read_text_file(
+  pending::create_fs_read_dir(
     &mut state,
     task_id,
     Path::new(&filename),
@@ -104,19 +102,22 @@ pub fn read_text_file_async<'s>(
   rv.set(promise.into());
 }
 
-/// `Rsvim.fs.readTextFileSync` API.
-pub fn read_text_file_sync<'s>(
+/// `Rsvim.fs.readDirSync` API.
+pub fn read_dir_sync<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
   let filename = _get_args(scope, args);
 
-  match fs_read_text_file_s(Path::new(&filename)) {
-    Ok(data) => {
-      let data = v8::String::new(scope, &data).unwrap();
+  let state_rc = JsRuntime::state(scope);
+  let resource_table = state_rc.borrow().resource_table.clone();
 
-      rv.set(data.into());
+  match fs_read_dir_s(resource_table, Path::new(&filename)) {
+    Ok(rd_rid) => {
+      let rd_rid = Into::<i32>::into(rd_rid);
+      let rd_rid = rd_rid.to_v8(scope);
+      rv.set(rd_rid);
     }
     Err(e) => {
       binding::throw_exception(scope, &e);
