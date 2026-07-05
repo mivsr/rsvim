@@ -606,13 +606,19 @@ export namespace RsvimFs {
   /**
    *
    */
-  export async function readDir(path: string): Promise<RsvimFs.ReadDirEntry> {
+  export async function readDir(path: string): Promise<AsyncIterable<RsvimFs.DirEntry>> {
+
+    // @ts-ignore Ignore warning
+    const rid = await __InternalRsvimGlobalObject.fs_read_dir(path);
+    const it = function* generator() {
+
+    }();
   }
 
   /**
    *
    */
-  export function readDirSync(path: string): RsvimFs.ReadDirEntry {
+  export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
   }
 
   /**
@@ -1465,7 +1471,7 @@ export namespace RsvimFs {
   /**
    *
    */
-  export class ReadDirEntry {
+  export class DirEntry {
   }
 }
 
