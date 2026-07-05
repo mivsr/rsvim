@@ -1,13 +1,5 @@
 //! File metadata.
 
-use crate::is_v8_str;
-use crate::js;
-use crate::js::JsFuture;
-use crate::js::JsRuntime;
-use crate::js::binding;
-use crate::js::converter::*;
-use crate::js::pending;
-use crate::prelude::*;
 use std::fs::Metadata;
 use std::time::SystemTime;
 

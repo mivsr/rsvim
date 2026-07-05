@@ -5,11 +5,15 @@ use crate::js;
 use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
+use crate::js::binding::global_rsvim::fs::metadata;
+use crate::js::binding::global_rsvim::fs::metadata::FsMetadata;
 use crate::js::converter::*;
 use crate::js::pending;
 use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
+use compact_str::CompactString;
+use compact_str::CompactStringExt;
 
 pub fn fs_read_dir_s(
   resource_table: ResourceTableArc,
@@ -125,10 +129,32 @@ pub fn read_dir_sync<'s>(
   }
 }
 
+#[derive(
+  Debug,
+  Clone,
+  PartialEq,
+  Eq,
+  derive_builder::Builder,
+  serde::Serialize,
+  serde::Deserialize,
+  rsvim_macro::ToV8,
+  rsvim_macro::FromV8,
+)]
+pub struct FsDirEntry {
+  #[builder(default = "".to_string())]
+  pub file_name: String,
+
+  #[builder(default = None)]
+  pub metadata: Option<FsMetadata>,
+
+  #[builder(default = "".to_string())]
+  pub path: String,
+}
+
 pub fn fs_read_dir_next_s(
   resource_table: ResourceTableArc,
   rid: ResourceId,
-) -> TheResult<FsFileInfo> {
+) -> TheResult<FsMetadata> {
   match std::fs::read_dir(path) {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
