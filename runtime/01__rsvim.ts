@@ -604,6 +604,18 @@ export namespace RsvimFs {
   }
 
   /**
+   *
+   */
+  export async function readDir(path: string): Promise<RsvimFs.ReadDirEntry> {
+  }
+
+  /**
+   *
+   */
+  export function readDirSync(path: string): RsvimFs.ReadDirEntry {
+  }
+
+  /**
    * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
    *
    * @param {string} path - File path to read.
@@ -1449,6 +1461,12 @@ export namespace RsvimFs {
      */
     mode?: number;
   };
+
+  /**
+   *
+   */
+  export class ReadDirEntry {
+  }
 }
 
 export namespace RsvimOpt {
@@ -2524,7 +2542,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
