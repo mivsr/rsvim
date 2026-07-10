@@ -156,9 +156,14 @@ pub fn fs_read_dir_next_s(
   rid: ResourceId,
 ) -> TheResult<FsMetadata> {
   let resource_table = lock!(resource_table);
-  match resource_table.get(&rid) {
-    Some(res) => match res {},
-    None => Err(TheErr::ReadDirectoryByRidFailed((), ())),
+  let res = resource_table.get(&rid).unwrap();
+  match res {
+    js::resource::Resource::ReadDirResource(rd) => {
+    }
+    _ => unreachable!(),
+  }
+
+    None => Err(TheErr::ReadDirectoryByRidFailed(rid, ())),
   }
   match std::fs::read_dir(path) {
     Ok(rd) => {
