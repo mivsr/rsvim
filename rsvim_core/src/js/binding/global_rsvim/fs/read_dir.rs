@@ -24,7 +24,7 @@ pub fn fs_read_dir_s(
       let mut resource_table = lock!(resource_table);
       Ok(resource_table.add_read_dir(rd))
     }
-    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
+    Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }
 }
 
@@ -155,12 +155,17 @@ pub fn fs_read_dir_next_s(
   resource_table: ResourceTableArc,
   rid: ResourceId,
 ) -> TheResult<FsMetadata> {
+  let resource_table = lock!(resource_table);
+  match resource_table.get(&rid) {
+    Some(res) => match res {},
+    None => Err(TheErr::ReadDirectoryByRidFailed((), ())),
+  }
   match std::fs::read_dir(path) {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
       Ok(resource_table.add_read_dir(rd))
     }
-    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
+    Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }
 }
 
