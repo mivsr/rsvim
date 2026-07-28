@@ -12,8 +12,6 @@ use crate::js::pending;
 use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
-use compact_str::CompactString;
-use compact_str::CompactStringExt;
 
 pub fn fs_read_dir_s(
   resource_table: ResourceTableArc,
@@ -154,23 +152,23 @@ pub struct FsDirEntry {
 pub fn fs_read_dir_next_s(
   resource_table: ResourceTableArc,
   rid: ResourceId,
-) -> TheResult<FsMetadata> {
+) -> Option<TheResult<FsDirEntry>> {
   let resource_table = lock!(resource_table);
   let res = resource_table.get(&rid).unwrap();
   match res {
     js::resource::Resource::ReadDirResource(rd) => {
+      let mut rd = lock!(rd.data());
+      match rd.next() {
+        Some(Ok(entry)) => Some(Ok(FsDirEntry {
+          file_name: entry.file_name().to_string_lossy().to_string(),
+          metadata: entry.metadata().ok().map(|d| metadata::convert(d)),
+          path: entry.path().to_string_lossy().to_string(),
+        })),
+        Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
+        None => None,
+      }
     }
     _ => unreachable!(),
-  }
-
-    None => Err(TheErr::ReadDirectoryByRidFailed(rid, ())),
-  }
-  match std::fs::read_dir(path) {
-    Ok(rd) => {
-      let mut resource_table = lock!(resource_table);
-      Ok(resource_table.add_read_dir(rd))
-    }
-    Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }
 }
 
