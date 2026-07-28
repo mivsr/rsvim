@@ -162,7 +162,7 @@ pub fn fs_read_dir_next_s(
       match rd.next() {
         Some(Ok(entry)) => Some(Ok(FsDirEntry {
           file_name: entry.file_name().to_string_lossy().to_string(),
-          metadata: entry.metadata().ok().map(|d| metadata::convert(d)),
+          metadata: entry.metadata().ok().map(metadata::convert),
           path: entry.path().to_string_lossy().to_string(),
         })),
         Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
