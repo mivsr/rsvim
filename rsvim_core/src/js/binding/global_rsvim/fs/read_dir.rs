@@ -182,23 +182,34 @@ impl JsFuture for FsReadDirNextFuture {
   fn run(&mut self, scope: &mut v8::PinScope) {
     trace!("|FsReadDirNextFuture|");
 
-    let result = self.maybe_result.take().unwrap();
+    let maybe_result = self.maybe_result.take();
 
-    // Handle when something goes wrong with it.
-    if let Err(e) = result {
-      let message = v8::String::new(scope, &e.to_string()).unwrap();
-      let exception = v8::Exception::error(scope, message);
-      binding::set_exception_code(scope, exception, &e);
-      self.promise.open(scope).reject(scope, exception);
-      return;
+    match maybe_result {
+      Some(result) => {
+        // Handle when something goes wrong with it.
+        if let Err(e) = result {
+          let message = v8::String::new(scope, &e.to_string()).unwrap();
+          let exception = v8::Exception::error(scope, message);
+          binding::set_exception_code(scope, exception, &e);
+          self.promise.open(scope).reject(scope, exception);
+          return;
+        }
+
+        // Otherwise, resolve the promise passing the result.
+        let result = result.unwrap();
+        let entry = postcard::from_bytes::<FsDirEntry>(&result).unwrap();
+        let entry = entry.to_v8(scope);
+
+        self.promise.open(scope).resolve(scope, entry).unwrap();
+      }
+      None => {
+        let undef = v8::undefined(scope);
+        self
+          .promise
+          .open(scope)
+          .resolve(scope, undef.into())
+          .unwrap();
+      }
     }
-
-    // Otherwise, resolve the promise passing the result.
-    let result = result.unwrap();
-    let rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
-    let rid = Into::<i32>::into(rid);
-    let rid = rid.to_v8(scope);
-
-    self.promise.open(scope).resolve(scope, rid).unwrap();
   }
 }
