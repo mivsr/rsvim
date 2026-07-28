@@ -157,7 +157,8 @@ pub fn fs_read_dir_next_s(
   let res = resource_table.get(&rid).unwrap();
   match res {
     js::resource::Resource::ReadDirResource(rd) => {
-      let mut rd = lock!(rd.data());
+      let rd = rd.data();
+      let mut rd = lock!(rd);
       match rd.next() {
         Some(Ok(entry)) => Some(Ok(FsDirEntry {
           file_name: entry.file_name().to_string_lossy().to_string(),
