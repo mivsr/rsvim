@@ -22,6 +22,7 @@ use crate::js::binding::global_rsvim::fs::link::fs_link_a;
 use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
 use crate::js::binding::global_rsvim::fs::open::fs_open_a;
 use crate::js::binding::global_rsvim::fs::read::fs_read_s;
+use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir_next_s;
 use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir_s;
 use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_a;
 use crate::js::binding::global_rsvim::fs::read_text_file::fs_read_text_file_a;
@@ -882,6 +883,26 @@ impl EventLoop {
                     Some(Ok(postcard::to_allocvec(&result).unwrap()))
                   }
                   Err(e) => Some(Err(e)),
+                },
+              }))
+              .unwrap();
+          });
+        }
+        MasterMessage::FsReadDirNextReq(req) => {
+          trace!("Recv FsReadDirNextReq:{:?}", req.task_id);
+          let jsrt_forwarder_tx = self.jsrt_forwarder_tx.clone();
+          let resource_table = self.resource_table.clone();
+          self.detached_tracker.spawn_blocking(move || {
+            let maybe_result = fs_read_dir_next_s(resource_table, req.rid);
+            jsrt_forwarder_tx
+              .send(JsMessage::FsReadDirResp(chan::FsReadDirResp {
+                task_id: req.task_id,
+                maybe_result: match maybe_result {
+                  Some(Ok(result)) => {
+                    Some(Ok(postcard::to_allocvec(&result).unwrap()))
+                  }
+                  Some(Err(e)) => Some(Err(e)),
+                  None => None,
                 },
               }))
               .unwrap();

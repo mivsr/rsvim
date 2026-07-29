@@ -5,6 +5,8 @@ use crate::js;
 use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
+use crate::js::binding::global_rsvim::fs::metadata;
+use crate::js::binding::global_rsvim::fs::metadata::FsMetadata;
 use crate::js::converter::*;
 use crate::js::pending;
 use crate::js::resource::ResourceId;
@@ -20,7 +22,7 @@ pub fn fs_read_dir_s(
       let mut resource_table = lock!(resource_table);
       Ok(resource_table.add_read_dir(rd))
     }
-    Err(e) => Err(TheErr::ReadDirectoryFailed(path.to_path_buf(), e)),
+    Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }
 }
 
@@ -121,6 +123,93 @@ pub fn read_dir_sync<'s>(
     }
     Err(e) => {
       binding::throw_exception(scope, &e);
+    }
+  }
+}
+
+#[derive(
+  Debug,
+  Clone,
+  PartialEq,
+  Eq,
+  derive_builder::Builder,
+  serde::Serialize,
+  serde::Deserialize,
+  rsvim_macro::ToV8,
+  rsvim_macro::FromV8,
+)]
+pub struct FsDirEntry {
+  #[builder(default = "".to_string())]
+  pub file_name: String,
+
+  #[builder(default = None)]
+  pub metadata: Option<FsMetadata>,
+
+  #[builder(default = "".to_string())]
+  pub path: String,
+}
+
+pub fn fs_read_dir_next_s(
+  resource_table: ResourceTableArc,
+  rid: ResourceId,
+) -> Option<TheResult<FsDirEntry>> {
+  let resource_table = lock!(resource_table);
+  let res = resource_table.get(&rid).unwrap();
+  match res {
+    js::resource::Resource::ReadDirResource(rd) => {
+      let rd = rd.data();
+      let mut rd = lock!(rd);
+      match rd.next() {
+        Some(Ok(entry)) => Some(Ok(FsDirEntry {
+          file_name: entry.file_name().to_string_lossy().to_string(),
+          metadata: entry.metadata().ok().map(metadata::convert),
+          path: entry.path().to_string_lossy().to_string(),
+        })),
+        Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
+        None => None,
+      }
+    }
+    _ => unreachable!(),
+  }
+}
+
+pub struct FsReadDirNextFuture {
+  pub promise: v8::Global<v8::PromiseResolver>,
+  pub maybe_result: Option<TheResult<Vec<u8>>>,
+}
+
+impl JsFuture for FsReadDirNextFuture {
+  fn run(&mut self, scope: &mut v8::PinScope) {
+    trace!("|FsReadDirNextFuture|");
+
+    let maybe_result = self.maybe_result.take();
+
+    match maybe_result {
+      Some(result) => {
+        // Handle when something goes wrong with it.
+        if let Err(e) = result {
+          let message = v8::String::new(scope, &e.to_string()).unwrap();
+          let exception = v8::Exception::error(scope, message);
+          binding::set_exception_code(scope, exception, &e);
+          self.promise.open(scope).reject(scope, exception);
+          return;
+        }
+
+        // Otherwise, resolve the promise passing the result.
+        let result = result.unwrap();
+        let entry = postcard::from_bytes::<FsDirEntry>(&result).unwrap();
+        let entry = entry.to_v8(scope);
+
+        self.promise.open(scope).resolve(scope, entry).unwrap();
+      }
+      None => {
+        let undef = v8::undefined(scope);
+        self
+          .promise
+          .open(scope)
+          .resolve(scope, undef.into())
+          .unwrap();
+      }
     }
   }
 }

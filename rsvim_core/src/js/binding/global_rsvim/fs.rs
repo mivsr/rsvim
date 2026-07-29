@@ -2,6 +2,7 @@
 
 pub mod close;
 pub mod link;
+pub mod metadata;
 pub mod mkdir;
 pub mod open;
 pub mod read;
