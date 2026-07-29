@@ -732,6 +732,9 @@ pub mod boost {
           JsMessage::FsReadDirResp(resp) => {
             process_message!(FsReadDirResp, resp)
           }
+          JsMessage::FsReadDirNextResp(resp) => {
+            process_message!(FsReadDirNextResp, resp)
+          }
           JsMessage::FsReadFileResp(resp) => {
             process_message!(FsReadFileResp, resp)
           }
