@@ -604,6 +604,26 @@ export namespace RsvimFs {
   }
 
   /**
+   * Read a directory.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {AsyncIterable<RsvimFs.DirEntry>} Iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * const dirIter = Rsvim.fs.readDir(".");
+   * ```
+   */
+  export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDir" path`);
+
+    // @ts-ignore Ignore warning
+    return __InternalRsvimGlobalObject.fs_read_dir(path);
+  }
+
+  /**
    * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
    *
    * @param {string} path - File path to read.
@@ -1186,6 +1206,14 @@ export namespace RsvimFs {
       // @ts-ignore Ignore warning
       return __InternalRsvimGlobalObject.fs_write_sync(this.#rid, buf.buffer);
     }
+  }
+
+  /**
+   * The directory entry object that contains a directory info on filesystem.
+   *
+   * @see {@link RsvimFs.open}
+   */
+  export class DirEntry {
   }
 
   /**
@@ -2524,7 +2552,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
