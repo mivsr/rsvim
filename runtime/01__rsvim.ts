@@ -1213,8 +1213,7 @@ export namespace RsvimFs {
    *
    * @see {@link RsvimFs.open}
    */
-  export class DirEntry {
-  }
+  export class DirEntry {}
 
   /**
    * File information, it contains 3 groups of properties:
@@ -2552,7 +2551,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function(globalThis: { Rsvim: RsvimNamespaceType }) {
+(function (globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 

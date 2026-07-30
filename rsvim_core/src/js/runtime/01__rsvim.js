@@ -456,6 +456,25 @@ export var RsvimFs;
     }
     RsvimFs.openSync = openSync;
     /**
+     * Read a directory.
+     *
+     * @param {string} path - Directory path to read.
+     * @returns {AsyncIterable<RsvimFs.DirEntry>} Iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+     *
+     * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+     *
+     * @example
+     * ```javascript
+     * const dirIter = Rsvim.fs.readDir(".");
+     * ```
+     */
+    function readDir(path) {
+        checkIsString(path, `"Rsvim.fs.readDir" path`);
+        // @ts-ignore Ignore warning
+        return __InternalRsvimGlobalObject.fs_read_dir(path);
+    }
+    RsvimFs.readDir = readDir;
+    /**
      * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
      *
      * @param {string} path - File path to read.
@@ -920,6 +939,14 @@ export var RsvimFs;
         }
     }
     RsvimFs.File = File;
+    /**
+     * The directory entry object that contains a directory info on filesystem.
+     *
+     * @see {@link RsvimFs.open}
+     */
+    class DirEntry {
+    }
+    RsvimFs.DirEntry = DirEntry;
 })(RsvimFs || (RsvimFs = {}));
 /**
  * The `Rsvim.opt` global object for global editor options. These options will change the editor's behavior

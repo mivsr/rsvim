@@ -337,6 +337,20 @@ export declare namespace RsvimFs {
      */
     function openSync(path: string, options?: RsvimFs.OpenOptions): RsvimFs.File;
     /**
+     * Read a directory.
+     *
+     * @param {string} path - Directory path to read.
+     * @returns {AsyncIterable<RsvimFs.DirEntry>} Iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+     *
+     * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+     *
+     * @example
+     * ```javascript
+     * const dirIter = Rsvim.fs.readDir(".");
+     * ```
+     */
+    function readDir(path: string): AsyncIterable<RsvimFs.DirEntry>;
+    /**
      * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
      *
      * @param {string} path - File path to read.
@@ -721,6 +735,13 @@ export declare namespace RsvimFs {
          * ```
          */
         writeSync(buf: Uint8Array): number;
+    }
+    /**
+     * The directory entry object that contains a directory info on filesystem.
+     *
+     * @see {@link RsvimFs.open}
+     */
+    class DirEntry {
     }
     /**
      * File information, it contains 3 groups of properties:
