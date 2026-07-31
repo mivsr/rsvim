@@ -61,7 +61,7 @@ normpath = "1.5"
 num-traits = "0.2"
 oxc_resolver = "11.21"
 paste = "1.0"
-path-absolutize = "3.1"
+path-absolutize = "4.0"
 postcard = { version = "1.1", default-features = false, features = ["use-std"] }
 proc-macro2 = "1"
 quote = "1"
