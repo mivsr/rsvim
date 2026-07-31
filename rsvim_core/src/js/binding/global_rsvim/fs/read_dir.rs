@@ -1,5 +1,6 @@
 //! Read directory APIs.
 
+use crate::is_v8_int;
 use crate::is_v8_str;
 use crate::js;
 use crate::js::JsFuture;
@@ -118,22 +119,19 @@ impl JsFuture for FsReadDirNextFuture {
     let maybe_result = self.maybe_result.take();
 
     match maybe_result {
-      Some(result) => {
-        // Handle when something goes wrong with it.
-        if let Err(e) = result {
-          let message = v8::String::new(scope, &e.to_string()).unwrap();
-          let exception = v8::Exception::error(scope, message);
-          binding::set_exception_code(scope, exception, &e);
-          self.promise.open(scope).reject(scope, exception);
-          return;
-        }
-
-        // Otherwise, resolve the promise passing the result.
+      Some(Ok(result)) => {
+        // Handle next item, resolve the promise passing the result.
         let result = result.unwrap();
         let entry = postcard::from_bytes::<FsDirEntry>(&result).unwrap();
         let entry = entry.to_v8(scope);
-
         self.promise.open(scope).resolve(scope, entry).unwrap();
+      }
+      Some(Err(e)) => {
+        // Handle when something goes wrong with it.
+        let message = v8::String::new(scope, &e.to_string()).unwrap();
+        let exception = v8::Exception::error(scope, message);
+        binding::set_exception_code(scope, exception, &e);
+        self.promise.open(scope).reject(scope, exception);
       }
       None => {
         let undef = v8::undefined(scope);
@@ -145,4 +143,73 @@ impl JsFuture for FsReadDirNextFuture {
       }
     }
   }
+}
+
+fn _get_next_args<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+) -> ResourceId {
+  debug_assert!(args.length() == 1);
+  debug_assert!(is_v8_int!(args.get(0)));
+  let rid = i32::from_v8(scope, args.get(0));
+  let rid = ResourceId::from(rid);
+  trace!("RsvimFs readDirNext rid:{:?}", rid);
+  rid
+}
+
+/// `Rsvim.fs.readDirNextSync` API.
+pub fn read_dir_next_sync<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let rid = _get_next_args(scope, args);
+
+  let state_rc = JsRuntime::state(scope);
+  let resource_table = state_rc.borrow().resource_table.clone();
+
+  match fs_read_dir_next_s(resource_table, rid) {
+    Some(Ok(entry)) => {
+      let entry = entry.to_v8(scope);
+      rv.set(entry.into());
+    }
+    Some(Err(e)) => {
+      binding::throw_exception(scope, &e);
+    }
+    None => {
+      rv.set_undefined();
+    }
+  }
+}
+
+/// `Rsvim.fs.readDirNext` API.
+pub fn read_dir_next_async<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let rid = _get_next_args(scope, args);
+
+  let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
+  let promise = promise_resolver.get_promise(scope);
+
+  let state_rc = JsRuntime::state(scope);
+  let read_cb = {
+    let promise = v8::Global::new(scope, promise_resolver);
+    let state_rc = state_rc.clone();
+    move |maybe_result: Option<TheResult<Vec<u8>>>| {
+      let fut = FsReadDirNextFuture {
+        promise: promise.clone(),
+        maybe_result,
+      };
+      let mut state = state_rc.borrow_mut();
+      state.pending_futures.push(Box::new(fut));
+    }
+  };
+
+  let mut state = state_rc.borrow_mut();
+  let task_id = js::TaskId::next();
+  pending::create_fs_read_dir_next(&mut state, task_id, rid, Box::new(read_cb));
+
+  rv.set(promise.into());
 }
