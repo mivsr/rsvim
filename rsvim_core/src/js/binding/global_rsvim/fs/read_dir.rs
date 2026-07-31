@@ -121,7 +121,6 @@ impl JsFuture for FsReadDirNextFuture {
     match maybe_result {
       Some(Ok(result)) => {
         // Handle next item, resolve the promise passing the result.
-        let result = result.unwrap();
         let entry = postcard::from_bytes::<FsDirEntry>(&result).unwrap();
         let entry = entry.to_v8(scope);
         self.promise.open(scope).resolve(scope, entry).unwrap();
