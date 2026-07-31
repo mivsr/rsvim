@@ -158,12 +158,6 @@ pub fn create_new_context<'s, 'b>(
     set_function_to(
       scope,
       vim,
-      "fs_read_dir",
-      global_rsvim::fs::read_dir_async,
-    );
-    set_function_to(
-      scope,
-      vim,
       "fs_read_dir_sync",
       global_rsvim::fs::read_dir_sync,
     );
