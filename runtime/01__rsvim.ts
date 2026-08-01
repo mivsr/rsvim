@@ -626,7 +626,7 @@ export namespace RsvimFs {
       const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
       while (true) {
         // @ts-ignore Ignore warning
-        yield await __InternalRsvimGlobalObject.fs_read_dir_next(rid);
+        yield await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
       }
     }
 
@@ -652,8 +652,16 @@ export namespace RsvimFs {
   export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDirSync" path`);
 
-    // @ts-ignore Ignore warning
-    return __InternalRsvimGlobalObject.fs_read_dir(path);
+    function* gen() {
+      // @ts-ignore Ignore warning
+      const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
+      while (true) {
+        // @ts-ignore Ignore warning
+        yield __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+      }
+    }
+
+    return gen();
   }
 
   /**
