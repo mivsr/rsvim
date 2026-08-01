@@ -621,7 +621,7 @@ export namespace RsvimFs {
   export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
-    async function* gen() {
+    async function* __gen() {
       // @ts-ignore Ignore warning
       const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
       while (true) {
@@ -630,7 +630,7 @@ export namespace RsvimFs {
       }
     }
 
-    return gen();
+    return __gen();
   }
 
   /**
@@ -651,7 +651,7 @@ export namespace RsvimFs {
   export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDirSync" path`);
 
-    function* gen() {
+    function* __gen() {
       // @ts-ignore Ignore warning
       const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
       while (true) {
@@ -660,7 +660,7 @@ export namespace RsvimFs {
       }
     }
 
-    return gen();
+    return __gen();
   }
 
   /**
@@ -1253,7 +1253,7 @@ export namespace RsvimFs {
    *
    * @see {@link RsvimFs.open}
    */
-  export class DirEntry {}
+  export class DirEntry { }
 
   /**
    * File information, it contains 3 groups of properties:
@@ -2591,7 +2591,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
