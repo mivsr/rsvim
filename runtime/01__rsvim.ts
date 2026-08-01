@@ -621,8 +621,16 @@ export namespace RsvimFs {
   export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
-    // @ts-ignore Ignore warning
-    return __InternalRsvimGlobalObject.fs_read_dir(path);
+    async function* gen() {
+      // @ts-ignore Ignore warning
+      const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
+      while (true) {
+        // @ts-ignore Ignore warning
+        yield await __InternalRsvimGlobalObject.fs_read_dir_next(rid);
+      }
+    }
+
+    return gen();
   }
 
 
@@ -642,7 +650,7 @@ export namespace RsvimFs {
    * ```
    */
   export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
-    checkIsString(path, `"Rsvim.fs.readDir" path`);
+    checkIsString(path, `"Rsvim.fs.readDirSync" path`);
 
     // @ts-ignore Ignore warning
     return __InternalRsvimGlobalObject.fs_read_dir(path);
