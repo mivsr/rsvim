@@ -1249,9 +1249,9 @@ export namespace RsvimFs {
   }
 
   /**
-   * The directory entry object that contains a directory info on filesystem.
+   * The directory entry object that contains a sub item metadata of the directory.
    *
-   * @see {@link RsvimFs.open}
+   * @see {@link RsvimFs.readDir}
    */
   export class DirEntry {
 
