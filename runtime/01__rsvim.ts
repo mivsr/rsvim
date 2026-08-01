@@ -604,19 +604,44 @@ export namespace RsvimFs {
   }
 
   /**
-   * Read a directory.
+   * Read a directory async by async iterable.
    *
    * @param {string} path - Directory path to read.
-   * @returns {AsyncIterable<RsvimFs.DirEntry>} Iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+   * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
    *
    * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
    *
    * @example
    * ```javascript
-   * const dirIter = Rsvim.fs.readDir(".");
+   * for await (const dirEntry of Rsvim.fs.readDir(".")) {
+   *   Rsvim.cmd.echo(dirEntry.name);
+   * }
    * ```
    */
   export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDir" path`);
+
+    // @ts-ignore Ignore warning
+    return __InternalRsvimGlobalObject.fs_read_dir(path);
+  }
+
+
+  /**
+   * Read a directory sync by sync iterable.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {Iterable<RsvimFs.DirEntry>} Sync iterator - A sync iterable of `{@link RsvimFs.DirEntry` under the directory.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * for (const dirEntry of Rsvim.fs.readDirSync(".")) {
+   *   Rsvim.cmd.echo(dirEntry.name);
+   * }
+   * ```
+   */
+  export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
     // @ts-ignore Ignore warning
@@ -1213,7 +1238,7 @@ export namespace RsvimFs {
    *
    * @see {@link RsvimFs.open}
    */
-  export class DirEntry {}
+  export class DirEntry { }
 
   /**
    * File information, it contains 3 groups of properties:
@@ -2551,7 +2576,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
