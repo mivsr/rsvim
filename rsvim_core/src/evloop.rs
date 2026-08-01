@@ -23,7 +23,6 @@ use crate::js::binding::global_rsvim::fs::mkdir::fs_mkdir_s;
 use crate::js::binding::global_rsvim::fs::open::fs_open_a;
 use crate::js::binding::global_rsvim::fs::read::fs_read_s;
 use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir_next_s;
-use crate::js::binding::global_rsvim::fs::read_dir::fs_read_dir_s;
 use crate::js::binding::global_rsvim::fs::read_file::fs_read_file_a;
 use crate::js::binding::global_rsvim::fs::read_text_file::fs_read_text_file_a;
 use crate::js::binding::global_rsvim::fs::stat::fs_lstat_a;
