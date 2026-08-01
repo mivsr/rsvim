@@ -337,19 +337,37 @@ export declare namespace RsvimFs {
      */
     function openSync(path: string, options?: RsvimFs.OpenOptions): RsvimFs.File;
     /**
-     * Read a directory.
+     * Read a directory async by async iterable.
      *
      * @param {string} path - Directory path to read.
-     * @returns {AsyncIterable<RsvimFs.DirEntry>} Iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+     * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
      *
      * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
      *
      * @example
      * ```javascript
-     * const dirIter = Rsvim.fs.readDir(".");
+     * for await (const dirEntry of Rsvim.fs.readDir(".")) {
+     *   Rsvim.cmd.echo(dirEntry.name);
+     * }
      * ```
      */
     function readDir(path: string): AsyncIterable<RsvimFs.DirEntry>;
+    /**
+     * Read a directory sync by sync iterable.
+     *
+     * @param {string} path - Directory path to read.
+     * @returns {Iterable<RsvimFs.DirEntry>} Sync iterator - A sync iterable of `{@link RsvimFs.DirEntry` under the directory.
+     *
+     * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+     *
+     * @example
+     * ```javascript
+     * for (const dirEntry of Rsvim.fs.readDirSync(".")) {
+     *   Rsvim.cmd.echo(dirEntry.name);
+     * }
+     * ```
+     */
+    function readDirSync(path: string): Iterable<RsvimFs.DirEntry>;
     /**
      * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
      *
