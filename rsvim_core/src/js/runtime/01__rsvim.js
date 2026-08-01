@@ -472,7 +472,7 @@ export var RsvimFs;
      */
     function readDir(path) {
         checkIsString(path, `"Rsvim.fs.readDir" path`);
-        async function* gen() {
+        async function* __gen() {
             // @ts-ignore Ignore warning
             const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
             while (true) {
@@ -480,7 +480,7 @@ export var RsvimFs;
                 yield await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
             }
         }
-        return gen();
+        return __gen();
     }
     RsvimFs.readDir = readDir;
     /**
@@ -500,7 +500,7 @@ export var RsvimFs;
      */
     function readDirSync(path) {
         checkIsString(path, `"Rsvim.fs.readDirSync" path`);
-        function* gen() {
+        function* __gen() {
             // @ts-ignore Ignore warning
             const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
             while (true) {
@@ -508,7 +508,7 @@ export var RsvimFs;
                 yield __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
             }
         }
-        return gen();
+        return __gen();
     }
     RsvimFs.readDirSync = readDirSync;
     /**
