@@ -743,7 +743,7 @@ export namespace RsvimFs {
    * @see {@link RsvimFs.stat}
    *
    * @param {string} path - File path.
-   * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+   * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
    *
    * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
    *
@@ -752,7 +752,7 @@ export namespace RsvimFs {
    * const fstat = await Rsvim.fs.lstat("README.md");
    * ```
    */
-  export async function lstat(path: string): Promise<RsvimFs.FileInfo> {
+  export async function lstat(path: string): Promise<RsvimFs.Metadata> {
     checkIsString(path, `"Rsvim.fs.lstat" path`);
 
     // @ts-ignore Ignore warning
@@ -767,7 +767,7 @@ export namespace RsvimFs {
    * const fstat = Rsvim.fs.lstatSync("README.md");
    * ```
    */
-  export function lstatSync(path: string): RsvimFs.FileInfo {
+  export function lstatSync(path: string): RsvimFs.Metadata {
     checkIsString(path, `"Rsvim.fs.lstatSync" path`);
 
     // @ts-ignore Ignore warning
@@ -784,7 +784,7 @@ export namespace RsvimFs {
    * @see {@link RsvimFs.lstat}
    *
    * @param {string} path - File path.
-   * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+   * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
    *
    * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
    *
@@ -793,7 +793,7 @@ export namespace RsvimFs {
    * const fstat = await Rsvim.fs.stat("README.md");
    * ```
    */
-  export async function stat(path: string): Promise<RsvimFs.FileInfo> {
+  export async function stat(path: string): Promise<RsvimFs.Metadata> {
     checkIsString(path, `"Rsvim.fs.stat" path`);
 
     // @ts-ignore Ignore warning
@@ -808,7 +808,7 @@ export namespace RsvimFs {
    * const fstat = Rsvim.fs.statSync("README.md");
    * ```
    */
-  export function statSync(path: string): RsvimFs.FileInfo {
+  export function statSync(path: string): RsvimFs.Metadata {
     checkIsString(path, `"Rsvim.fs.statSync" path`);
 
     // @ts-ignore Ignore warning
@@ -1253,10 +1253,12 @@ export namespace RsvimFs {
    *
    * @see {@link RsvimFs.open}
    */
-  export class DirEntry {}
+  export class DirEntry {
+
+  }
 
   /**
-   * File information, it contains 3 groups of properties:
+   * File metadata, it contains 3 groups of properties:
    * - Common properties that are available for all platforms.
    * - Windows platforms only properties
    * - Unix platforms only properties
@@ -1265,7 +1267,7 @@ export namespace RsvimFs {
    * @categoryDescription Windows Only
    * @categoryDescription Unix Only
    */
-  export type FileInfo = {
+  export type Metadata = {
     /**
      * Last access time of the file.
      *
@@ -2591,7 +2593,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
