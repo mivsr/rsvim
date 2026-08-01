@@ -170,7 +170,7 @@ pub fn read_dir_next_sync<'s>(
   match fs_read_dir_next_s(resource_table, rid) {
     Some(Ok(entry)) => {
       let entry = entry.to_v8(scope);
-      rv.set(entry.into());
+      rv.set(entry);
     }
     Some(Err(e)) => {
       binding::throw_exception(scope, &e);
