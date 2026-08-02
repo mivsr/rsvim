@@ -606,6 +606,8 @@ export namespace RsvimFs {
   /**
    * Read a directory async by async iterable.
    *
+   * Note: This function itself is sync, but the value it returned is an async iterable.
+   *
    * @param {string} path - Directory path to read.
    * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
    *
@@ -1253,9 +1255,7 @@ export namespace RsvimFs {
    *
    * @see {@link RsvimFs.readDir}
    */
-  export class DirEntry {
-
-  }
+  export class DirEntry {}
 
   /**
    * File metadata, it contains 3 groups of properties:
@@ -2593,7 +2593,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function(globalThis: { Rsvim: RsvimNamespaceType }) {
+(function (globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
