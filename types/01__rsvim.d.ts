@@ -339,6 +339,8 @@ export declare namespace RsvimFs {
     /**
      * Read a directory async by async iterable.
      *
+     * Note: This function itself is sync, but the value it returned is an async iterable.
+     *
      * @param {string} path - Directory path to read.
      * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
      *
@@ -424,7 +426,7 @@ export declare namespace RsvimFs {
      * @see {@link RsvimFs.stat}
      *
      * @param {string} path - File path.
-     * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+     * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
      *
      * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
      *
@@ -433,7 +435,7 @@ export declare namespace RsvimFs {
      * const fstat = await Rsvim.fs.lstat("README.md");
      * ```
      */
-    function lstat(path: string): Promise<RsvimFs.FileInfo>;
+    function lstat(path: string): Promise<RsvimFs.Metadata>;
     /**
      * Sync version of {@link lstat}.
      *
@@ -442,7 +444,7 @@ export declare namespace RsvimFs {
      * const fstat = Rsvim.fs.lstatSync("README.md");
      * ```
      */
-    function lstatSync(path: string): RsvimFs.FileInfo;
+    function lstatSync(path: string): RsvimFs.Metadata;
     /**
      * Get the status of a file by path.
      *
@@ -453,7 +455,7 @@ export declare namespace RsvimFs {
      * @see {@link RsvimFs.lstat}
      *
      * @param {string} path - File path.
-     * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+     * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
      *
      * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
      *
@@ -462,7 +464,7 @@ export declare namespace RsvimFs {
      * const fstat = await Rsvim.fs.stat("README.md");
      * ```
      */
-    function stat(path: string): Promise<RsvimFs.FileInfo>;
+    function stat(path: string): Promise<RsvimFs.Metadata>;
     /**
      * Sync version of {@link stat}.
      *
@@ -471,7 +473,7 @@ export declare namespace RsvimFs {
      * const fstat = Rsvim.fs.statSync("README.md");
      * ```
      */
-    function statSync(path: string): RsvimFs.FileInfo;
+    function statSync(path: string): RsvimFs.Metadata;
     /**
      * Create symbolic link from a file path.
      *
@@ -755,14 +757,26 @@ export declare namespace RsvimFs {
         writeSync(buf: Uint8Array): number;
     }
     /**
-     * The directory entry object that contains a directory info on filesystem.
+     * The metadata of a sub-item under the directory.
      *
-     * @see {@link RsvimFs.open}
+     * @see {@link RsvimFs.readDir}
      */
-    class DirEntry {
-    }
+    type DirEntry = {
+        /**
+         * File name.
+         */
+        fileName: string;
+        /**
+         * File metadata.
+         */
+        metadata?: RsvimFs.Metadata;
+        /**
+         * File path.
+         */
+        path: string;
+    };
     /**
-     * File information, it contains 3 groups of properties:
+     * File metadata, it contains 3 groups of properties:
      * - Common properties that are available for all platforms.
      * - Windows platforms only properties
      * - Unix platforms only properties
@@ -771,7 +785,7 @@ export declare namespace RsvimFs {
      * @categoryDescription Windows Only
      * @categoryDescription Unix Only
      */
-    type FileInfo = {
+    type Metadata = {
         /**
          * Last access time of the file.
          *

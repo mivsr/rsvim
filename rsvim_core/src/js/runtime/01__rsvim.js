@@ -458,6 +458,8 @@ export var RsvimFs;
     /**
      * Read a directory async by async iterable.
      *
+     * Note: This function itself is sync, but the value it returned is an async iterable.
+     *
      * @param {string} path - Directory path to read.
      * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
      *
@@ -587,7 +589,7 @@ export var RsvimFs;
      * @see {@link RsvimFs.stat}
      *
      * @param {string} path - File path.
-     * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+     * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
      *
      * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
      *
@@ -626,7 +628,7 @@ export var RsvimFs;
      * @see {@link RsvimFs.lstat}
      *
      * @param {string} path - File path.
-     * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+     * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
      *
      * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
      *
@@ -976,14 +978,6 @@ export var RsvimFs;
         }
     }
     RsvimFs.File = File;
-    /**
-     * The directory entry object that contains a directory info on filesystem.
-     *
-     * @see {@link RsvimFs.open}
-     */
-    class DirEntry {
-    }
-    RsvimFs.DirEntry = DirEntry;
 })(RsvimFs || (RsvimFs = {}));
 /**
  * The `Rsvim.opt` global object for global editor options. These options will change the editor's behavior
