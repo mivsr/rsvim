@@ -1251,11 +1251,26 @@ export namespace RsvimFs {
   }
 
   /**
-   * The directory entry object that contains a sub item metadata of the directory.
+   * The metadata of a sub-item under the directory.
    *
    * @see {@link RsvimFs.readDir}
    */
-  export class DirEntry {}
+  export type DirEntry = {
+    /**
+     * File name.
+     */
+    fileName: string;
+
+    /**
+     * File metadata.
+     */
+    metadata?: RsvimFs.Metadata;
+
+    /**
+     * File path.
+     */
+    path: string;
+  };
 
   /**
    * File metadata, it contains 3 groups of properties:
