@@ -544,15 +544,18 @@ async fn test_read_dir1() -> IoResult<()> {
     .open(tmpfile.as_path())
     .unwrap();
 
-  let src = r###"
-  const it = await Rsvim.fs.readDir(".");
+  let src = format!(
+    r###"
+  const it = await Rsvim.fs.readDir({:?});
   for await (const entry of it) {{
     Rsvim.cmd.echo(entry.name);
   }}
-"###;
+"###,
+    tmpdir.to_string_lossy().to_string()
+  );
 
   // Prepare $RSVIM_CONFIG/rsvim.js
-  let _tp = make_configs(vec![(Path::new("rsvim.js"), src)]);
+  let _tp = make_configs(vec![(Path::new("rsvim.js"), &src)]);
 
   let mut event_loop =
     make_event_loop(terminal_cols, terminal_rows, CliOptions::empty());
