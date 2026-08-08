@@ -542,8 +542,8 @@ async fn test_read_dir1() -> IoResult<()> {
 
   let src = format!(
     r###"
-  const it = await Rsvim.fs.readDir({:?});
-  for await (const entry of it) {{
+
+  for await (const entry of Rsvim.fs.readDir({})) {{
     Rsvim.cmd.echo(entry.name);
   }}
 "###,
