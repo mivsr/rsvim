@@ -604,6 +604,68 @@ export namespace RsvimFs {
   }
 
   /**
+   * Read a directory async by async iterable.
+   *
+   * Note: This function itself is sync, but the value it returned is an async iterable.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of `{@link RsvimFs.DirEntry` under the directory.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * for await (const dirEntry of Rsvim.fs.readDir(".")) {
+   *   Rsvim.cmd.echo(dirEntry.name);
+   * }
+   * ```
+   */
+  export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDir" path`);
+
+    async function* __gen() {
+      // @ts-ignore Ignore warning
+      const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+      while (true) {
+        // @ts-ignore Ignore warning
+        yield await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+      }
+    }
+
+    return __gen();
+  }
+
+  /**
+   * Read a directory sync by sync iterable.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {Iterable<RsvimFs.DirEntry>} Sync iterator - A sync iterable of `{@link RsvimFs.DirEntry` under the directory.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * for (const dirEntry of Rsvim.fs.readDirSync(".")) {
+   *   Rsvim.cmd.echo(dirEntry.name);
+   * }
+   * ```
+   */
+  export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDirSync" path`);
+
+    function* __gen() {
+      // @ts-ignore Ignore warning
+      const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
+      while (true) {
+        // @ts-ignore Ignore warning
+        yield __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+      }
+    }
+
+    return __gen();
+  }
+
+  /**
    * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
    *
    * @param {string} path - File path to read.
@@ -683,7 +745,7 @@ export namespace RsvimFs {
    * @see {@link RsvimFs.stat}
    *
    * @param {string} path - File path.
-   * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+   * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
    *
    * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
    *
@@ -692,7 +754,7 @@ export namespace RsvimFs {
    * const fstat = await Rsvim.fs.lstat("README.md");
    * ```
    */
-  export async function lstat(path: string): Promise<RsvimFs.FileInfo> {
+  export async function lstat(path: string): Promise<RsvimFs.Metadata> {
     checkIsString(path, `"Rsvim.fs.lstat" path`);
 
     // @ts-ignore Ignore warning
@@ -707,7 +769,7 @@ export namespace RsvimFs {
    * const fstat = Rsvim.fs.lstatSync("README.md");
    * ```
    */
-  export function lstatSync(path: string): RsvimFs.FileInfo {
+  export function lstatSync(path: string): RsvimFs.Metadata {
     checkIsString(path, `"Rsvim.fs.lstatSync" path`);
 
     // @ts-ignore Ignore warning
@@ -724,7 +786,7 @@ export namespace RsvimFs {
    * @see {@link RsvimFs.lstat}
    *
    * @param {string} path - File path.
-   * @returns {Promise<RsvimFs.FileInfo>} It resolves to the file status.
+   * @returns {Promise<RsvimFs.Metadata>} It resolves to the file status.
    *
    * @throws Throws {@link !TypeError} if the file name is invalid. Or throws {@link Error} if failed to get file status.
    *
@@ -733,7 +795,7 @@ export namespace RsvimFs {
    * const fstat = await Rsvim.fs.stat("README.md");
    * ```
    */
-  export async function stat(path: string): Promise<RsvimFs.FileInfo> {
+  export async function stat(path: string): Promise<RsvimFs.Metadata> {
     checkIsString(path, `"Rsvim.fs.stat" path`);
 
     // @ts-ignore Ignore warning
@@ -748,7 +810,7 @@ export namespace RsvimFs {
    * const fstat = Rsvim.fs.statSync("README.md");
    * ```
    */
-  export function statSync(path: string): RsvimFs.FileInfo {
+  export function statSync(path: string): RsvimFs.Metadata {
     checkIsString(path, `"Rsvim.fs.statSync" path`);
 
     // @ts-ignore Ignore warning
@@ -1189,7 +1251,29 @@ export namespace RsvimFs {
   }
 
   /**
-   * File information, it contains 3 groups of properties:
+   * The metadata of a sub-item under the directory.
+   *
+   * @see {@link RsvimFs.readDir}
+   */
+  export type DirEntry = {
+    /**
+     * File name.
+     */
+    fileName: string;
+
+    /**
+     * File metadata.
+     */
+    metadata?: RsvimFs.Metadata;
+
+    /**
+     * File path.
+     */
+    path: string;
+  };
+
+  /**
+   * File metadata, it contains 3 groups of properties:
    * - Common properties that are available for all platforms.
    * - Windows platforms only properties
    * - Unix platforms only properties
@@ -1198,7 +1282,7 @@ export namespace RsvimFs {
    * @categoryDescription Windows Only
    * @categoryDescription Unix Only
    */
-  export type FileInfo = {
+  export type Metadata = {
     /**
      * Last access time of the file.
      *

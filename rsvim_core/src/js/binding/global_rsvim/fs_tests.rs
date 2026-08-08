@@ -528,6 +528,58 @@ async fn test_read_write4() -> IoResult<()> {
 
 #[tokio::test]
 #[cfg_attr(miri, ignore)]
+async fn test_read_dir1() -> IoResult<()> {
+  test_log_init();
+
+  let terminal_cols = 10_u16;
+  let terminal_rows = 10_u16;
+  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(50))];
+
+  let parser_path = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
+
+  let src = format!(
+    r###"
+
+  for await (const entry of Rsvim.fs.readDir({:?})) {{
+    Rsvim.cmd.echo(entry.name);
+  }}
+"###,
+    parser_path
+  );
+
+  // Prepare $RSVIM_CONFIG/rsvim.js
+  let _tp = make_configs(vec![(Path::new("rsvim.js"), &src)]);
+
+  let mut event_loop =
+    make_event_loop(terminal_cols, terminal_rows, CliOptions::empty());
+
+  event_loop.initialize()?;
+  event_loop
+    .run_with_mock_events(MockEventReader::new(mocked_events))
+    .await?;
+  event_loop.shutdown()?;
+
+  // After running
+  {
+    let mut contents = lock!(event_loop.cmdline_text);
+    let n = contents.message_history().len();
+    assert_eq!(n, 2);
+
+    let actual = contents.message_history_mut().pop().unwrap();
+    assert_eq!(actual, "[object ArrayBuffer]");
+
+    let actual = contents.message_history_mut().pop().unwrap();
+    assert_eq!(actual, format!("{}", "Hello, World!".len()));
+  }
+
+  Ok(())
+}
+
+#[tokio::test]
+#[cfg_attr(miri, ignore)]
 async fn test_read_file1() -> IoResult<()> {
   test_log_init();
 
