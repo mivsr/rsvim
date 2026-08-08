@@ -535,14 +535,10 @@ async fn test_read_dir1() -> IoResult<()> {
   let terminal_rows = 10_u16;
   let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(50))];
 
-  let tmpdir = assert_fs::TempDir::new().unwrap();
-  let tmpfile = tmpdir.join("test.txt");
-  let _ = std::fs::OpenOptions::new()
-    .create(true)
-    .truncate(true)
-    .write(true)
-    .open(tmpfile.as_path())
-    .unwrap();
+  let parser_path = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
 
   let src = format!(
     r###"
@@ -551,7 +547,7 @@ async fn test_read_dir1() -> IoResult<()> {
     Rsvim.cmd.echo(entry.name);
   }}
 "###,
-    tmpdir.to_string_lossy().to_string()
+    parser_path
   );
 
   // Prepare $RSVIM_CONFIG/rsvim.js
