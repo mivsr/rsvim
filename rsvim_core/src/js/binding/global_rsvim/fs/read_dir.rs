@@ -30,12 +30,16 @@ pub fn fs_read_dir_s(
 fn _get_args<'s>(
   scope: &mut v8::PinScope<'s, '_>,
   args: v8::FunctionCallbackArguments<'s>,
-) -> String {
+) -> PathBuf {
   debug_assert!(args.length() == 1);
   debug_assert!(is_v8_str!(args.get(0)));
   let filename = args.get(0).to_rust_string_lossy(scope);
-  trace!("RsvimFs readDir filename:{:?}", filename);
-  filename
+  let normalized = Path::new(&filename).normalize().unwrap();
+  trace!(
+    "RsvimFs readDir filename:{:?} normalized:{:?}",
+    filename, normalized
+  );
+  normalized.to_path_buf()
 }
 
 /// `Rsvim.fs.readDir` and `Rsvim.fs.readDirSync` API.
