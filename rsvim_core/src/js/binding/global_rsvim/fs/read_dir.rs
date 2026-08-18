@@ -53,7 +53,7 @@ pub fn read_dir_sync<'s>(
   let state_rc = JsRuntime::state(scope);
   let resource_table = state_rc.borrow().resource_table.clone();
 
-  match fs_read_dir_s(resource_table, Path::new(&filename)) {
+  match fs_read_dir_s(resource_table, filename.as_path()) {
     Ok(rd_rid) => {
       let rd_rid = Into::<i32>::into(rd_rid);
       let rd_rid = rd_rid.to_v8(scope);
