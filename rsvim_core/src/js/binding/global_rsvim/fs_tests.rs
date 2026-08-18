@@ -539,6 +539,7 @@ async fn test_read_dir1() -> IoResult<()> {
     env!("CARGO_MANIFEST_DIR"),
     "/../tests_and_benchmarks/tree-sitter-python"
   );
+  info!("parser_path:{:?}", parser_path);
 
   let src = format!(
     r###"
