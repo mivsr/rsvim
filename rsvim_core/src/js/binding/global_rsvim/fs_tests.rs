@@ -531,15 +531,30 @@ async fn test_read_write4() -> IoResult<()> {
 async fn test_read_dir1() -> IoResult<()> {
   test_log_init();
 
-  let terminal_cols = 10_u16;
-  let terminal_rows = 10_u16;
-  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(50))];
-
   let parser_path = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../tests_and_benchmarks/tree-sitter-python"
   );
   info!("parser_path:{:?}", parser_path);
+
+  match std::fs::read_dir(parser_path) {
+    Ok(rd) => {
+      while true {
+        match rd.next() {
+          Some(Ok(entry)) => {}
+          Some(Err(e)) => {}
+          None => {}
+        }
+      }
+    }
+    Err(e) => {
+      info!("read_dir failed {:?}", e);
+    }
+  }
+
+  let terminal_cols = 10_u16;
+  let terminal_rows = 10_u16;
+  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(50))];
 
   let src = format!(
     r###"
