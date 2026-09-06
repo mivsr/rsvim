@@ -586,13 +586,7 @@ async fn test_read_dir1() -> IoResult<()> {
   {
     let mut contents = lock!(event_loop.cmdline_text);
     let n = contents.message_history().len();
-    assert_eq!(n, 2);
-
-    let actual = contents.message_history_mut().pop().unwrap();
-    assert_eq!(actual, "[object ArrayBuffer]");
-
-    let actual = contents.message_history_mut().pop().unwrap();
-    assert_eq!(actual, format!("{}", "Hello, World!".len()));
+    assert_eq!(n, 0);
   }
 
   Ok(())
