@@ -538,22 +538,18 @@ async fn test_read_dir1() -> IoResult<()> {
   info!("parser_path:{:?}", parser_path);
 
   match std::fs::read_dir(parser_path) {
-    Ok(mut rd) => {
-      while true {
-        match rd.next() {
-          Some(Ok(entry)) => {
+    Ok(rd) => {
+      for entry in rd {
+        match entry {
+          Ok(entry) => {
             info!("parser_path next entry:{:?}", entry);
           }
-          Some(Err(e)) => {
+          Err(e) => {
             info!("parser_path next fail:{:?}", e);
-            break;
-          }
-          None => {
-            info!("parser_path next none");
-            break;
           }
         }
       }
+      info!("parser_path complete");
     }
     Err(e) => {
       info!("read_dir failed {:?}", e);
