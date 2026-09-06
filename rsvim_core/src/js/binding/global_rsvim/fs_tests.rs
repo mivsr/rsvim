@@ -584,7 +584,7 @@ async fn test_read_dir1() -> IoResult<()> {
 
   // After running
   {
-    let mut contents = lock!(event_loop.cmdline_text);
+    let contents = lock!(event_loop.cmdline_text);
     let n = contents.message_history().len();
     assert_eq!(n, 0);
   }
