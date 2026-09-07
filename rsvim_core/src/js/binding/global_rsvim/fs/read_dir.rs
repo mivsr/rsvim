@@ -177,13 +177,16 @@ pub fn read_dir_next_sync<'s>(
 
   match fs_read_dir_next_s(resource_table, rid) {
     Some(Ok(entry)) => {
+      trace!("read_dir_next_sync rid:{:?}, entry:{:?}", rid, entry);
       let entry = entry.to_v8(scope);
       rv.set(entry);
     }
     Some(Err(e)) => {
+      trace!("read_dir_next_sync rid:{:?}, error:{:?}", rid, e);
       binding::throw_exception(scope, &e);
     }
     None => {
+      trace!("read_dir_next_sync null rid:{:?}", rid);
       rv.set_undefined();
     }
   }
