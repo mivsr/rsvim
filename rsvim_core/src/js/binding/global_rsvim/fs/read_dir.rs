@@ -94,12 +94,20 @@ pub fn fs_read_dir_next_s(
       let rd = rd.data();
       let mut rd = lock!(rd);
       match rd.next() {
-        Some(Ok(entry)) => Some(Ok(FsDirEntry {
-          file_name: entry.file_name().to_string_lossy().to_string(),
-          metadata: entry.metadata().ok().map(metadata::convert),
-          path: entry.path().to_string_lossy().to_string(),
-        })),
-        Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
+        Some(entry_result) => {
+          trace!(
+            "fs_read_dir_next_s rid:{:?}, entry_result:{:?}",
+            rid, entry_result
+          );
+          match entry_result {
+            Ok(entry) => Some(Ok(FsDirEntry {
+              file_name: entry.file_name().to_string_lossy().to_string(),
+              metadata: entry.metadata().ok().map(metadata::convert),
+              path: entry.path().to_string_lossy().to_string(),
+            })),
+            Err(e) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
+          }
+        }
         None => None,
       }
     }
