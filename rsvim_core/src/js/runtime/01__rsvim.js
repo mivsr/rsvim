@@ -474,15 +474,22 @@ export var RsvimFs;
      */
     function readDir(path) {
         checkIsString(path, `"Rsvim.fs.readDir" path`);
-        async function* __gen() {
-            // @ts-ignore Ignore warning
-            const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
-            while (true) {
-                // @ts-ignore Ignore warning
-                yield await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
-            }
-        }
-        return __gen();
+        // @ts-ignore Ignore warning
+        const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+        const it = {
+            async *[Symbol.asyncIterator]() {
+                while (true) {
+                    const entry = 
+                    // @ts-ignore Ignore warning
+                    await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+                    if (entry == null) {
+                        break;
+                    }
+                    yield entry;
+                }
+            },
+        };
+        return it;
     }
     RsvimFs.readDir = readDir;
     /**
@@ -502,15 +509,21 @@ export var RsvimFs;
      */
     function readDirSync(path) {
         checkIsString(path, `"Rsvim.fs.readDirSync" path`);
-        function* __gen() {
-            // @ts-ignore Ignore warning
-            const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
-            while (true) {
-                // @ts-ignore Ignore warning
-                yield __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
-            }
-        }
-        return __gen();
+        // @ts-ignore Ignore warning
+        const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+        const it = {
+            *[Symbol.iterator]() {
+                while (true) {
+                    // @ts-ignore Ignore warning
+                    const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+                    if (entry == null) {
+                        break;
+                    }
+                    yield entry;
+                }
+            },
+        };
+        return it;
     }
     RsvimFs.readDirSync = readDirSync;
     /**

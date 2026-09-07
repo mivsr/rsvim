@@ -7,7 +7,7 @@ use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
 use crate::js::binding::global_rsvim::fs::metadata;
-use crate::js::binding::global_rsvim::fs::metadata::FsMetadata;
+use crate::js::binding::global_rsvim::fs::metadata::*;
 use crate::js::converter::*;
 use crate::js::pending;
 use crate::js::resource::ResourceId;
