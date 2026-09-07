@@ -1,6 +1,4 @@
 [tools]
-rust = { version = "stable", components = "rust-src,rust-analyzer" }
-
 "cargo:cargo-expand" = "latest"
 "cargo:cargo-nextest" = "latest"
 "cargo:cargo-release" = "latest"
