@@ -2608,7 +2608,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function(globalThis: { Rsvim: RsvimNamespaceType }) {
+(function (globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 

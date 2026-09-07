@@ -504,7 +504,7 @@ export var RsvimFs;
         checkIsString(path, `"Rsvim.fs.readDirSync" path`);
         function* __gen() {
             // @ts-ignore Ignore warning
-            const rid = __InternalRsvimGlobalObject.fs_read_dir(path);
+            const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
             while (true) {
                 // @ts-ignore Ignore warning
                 yield __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
