@@ -94,12 +94,12 @@ pub fn fs_read_dir_next_s(
       let rd = rd.data();
       let mut rd = lock!(rd);
       match rd.next() {
-        Some(entry_result) => {
+        Some(rd_entry) => {
           trace!(
             "fs_read_dir_next_s rid:{:?}, entry_result:{:?}",
-            rid, entry_result
+            rid, rd_entry
           );
-          match entry_result {
+          match rd_entry {
             Ok(entry) => Some(Ok(FsDirEntry {
               file_name: entry.file_name().to_string_lossy().to_string(),
               metadata: entry.metadata().ok().map(metadata::convert),
