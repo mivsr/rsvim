@@ -632,6 +632,8 @@ export namespace RsvimFs {
           const entry =
             // @ts-ignore Ignore warning
             await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+          Rsvim.cmd.echo(`readDir`);
+          Rsvim.cmd.echo(entry);
           if (entry == null) {
             break;
           }
@@ -669,6 +671,8 @@ export namespace RsvimFs {
         while (true) {
           // @ts-ignore Ignore warning
           const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+          Rsvim.cmd.echo(`readDirSync`);
+          Rsvim.cmd.echo(entry);
           if (entry == null) {
             break;
           }
@@ -2623,7 +2627,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function (globalThis: { Rsvim: RsvimNamespaceType }) {
+(function(globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 
