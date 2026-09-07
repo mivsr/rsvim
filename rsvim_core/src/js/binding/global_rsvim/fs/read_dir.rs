@@ -34,12 +34,8 @@ fn _get_args<'s>(
   debug_assert!(args.length() == 1);
   debug_assert!(is_v8_str!(args.get(0)));
   let filename = args.get(0).to_rust_string_lossy(scope);
-  let normalized = Path::new(&filename).normalize().unwrap();
-  trace!(
-    "RsvimFs readDir filename:{:?} normalized:{:?}",
-    filename, normalized
-  );
-  normalized.to_path_buf()
+  trace!("RsvimFs readDir filename:{:?}", filename);
+  Path::new(&filename).to_path_buf()
 }
 
 /// `Rsvim.fs.readDir` and `Rsvim.fs.readDirSync` API.

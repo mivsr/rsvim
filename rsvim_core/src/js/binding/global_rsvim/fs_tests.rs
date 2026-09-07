@@ -594,6 +594,72 @@ async fn test_read_dir1() -> IoResult<()> {
 
 #[tokio::test]
 #[cfg_attr(miri, ignore)]
+async fn test_read_dir2() -> IoResult<()> {
+  test_log_init();
+
+  let parser_path = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
+  info!("parser_path:{:?}", parser_path);
+
+  match std::fs::read_dir(parser_path) {
+    Ok(rd) => {
+      for entry in rd {
+        match entry {
+          Ok(entry) => {
+            info!("parser_path next entry:{:?}", entry);
+          }
+          Err(e) => {
+            info!("parser_path next fail:{:?}", e);
+          }
+        }
+      }
+      info!("parser_path complete");
+    }
+    Err(e) => {
+      info!("read_dir failed {:?}", e);
+    }
+  }
+
+  let terminal_cols = 10_u16;
+  let terminal_rows = 10_u16;
+  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(50))];
+
+  let src = format!(
+    r###"
+
+  for await (const entry of Rsvim.fs.readDir({:?})) {{
+    Rsvim.cmd.echo(entry.name);
+  }}
+"###,
+    parser_path
+  );
+
+  // Prepare $RSVIM_CONFIG/rsvim.js
+  let _tp = make_configs(vec![(Path::new("rsvim.js"), &src)]);
+
+  let mut event_loop =
+    make_event_loop(terminal_cols, terminal_rows, CliOptions::empty());
+
+  event_loop.initialize()?;
+  event_loop
+    .run_with_mock_events(MockEventReader::new(mocked_events))
+    .await?;
+  event_loop.shutdown()?;
+
+  // After running
+  {
+    let contents = lock!(event_loop.cmdline_text);
+    let n = contents.message_history().len();
+    assert_eq!(n, 0);
+  }
+
+  Ok(())
+}
+
+#[tokio::test]
+#[cfg_attr(miri, ignore)]
 async fn test_read_file1() -> IoResult<()> {
   test_log_init();
 
