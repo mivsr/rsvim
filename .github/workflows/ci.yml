@@ -133,10 +133,9 @@ jobs:
         with:
           fail_ci_if_error: true
           files: lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
-        # env:
-        #   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   build:
     name: Build
     strategy:
