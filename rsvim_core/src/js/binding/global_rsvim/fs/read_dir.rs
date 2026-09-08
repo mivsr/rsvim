@@ -92,8 +92,8 @@ pub fn fs_read_dir_next_s(
   match res {
     js::resource::Resource::ReadDirResource(rd) => {
       let rd = rd.data();
-      let mut rd = lock!(rd);
-      match rd.next() {
+      let rd_entry = lock!(rd).next();
+      match rd_entry {
         Some(rd_entry) => {
           trace!(
             "fs_read_dir_next_s rid:{:?}, entry_result:{:?}",

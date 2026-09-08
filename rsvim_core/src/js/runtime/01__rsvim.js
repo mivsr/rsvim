@@ -481,6 +481,7 @@ export var RsvimFs;
                 const entry = 
                 // @ts-ignore Ignore warning
                 await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+                Rsvim.cmd.echo(`readDir: ${entry}`);
                 if (entry == null) {
                     Rsvim.cmd.echo(`readDir: null`);
                     break;
@@ -517,6 +518,7 @@ export var RsvimFs;
             while (true) {
                 // @ts-ignore Ignore warning
                 const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+                Rsvim.cmd.echo(`readDirSync: ${entry}`);
                 if (entry == null) {
                     Rsvim.cmd.echo(`readDirSync: null`);
                     break;
