@@ -632,11 +632,11 @@ export namespace RsvimFs {
           const entry =
             // @ts-ignore Ignore warning
             await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
-          Rsvim.cmd.echo(`readDir`);
-          Rsvim.cmd.echo(entry);
           if (entry == null) {
+            Rsvim.cmd.echo(`readDir: null`);
             break;
           }
+          Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
           yield entry;
         }
       },
@@ -671,11 +671,11 @@ export namespace RsvimFs {
         while (true) {
           // @ts-ignore Ignore warning
           const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
-          Rsvim.cmd.echo(`readDirSync`);
-          Rsvim.cmd.echo(entry);
           if (entry == null) {
+            Rsvim.cmd.echo(`readDirSync: null`);
             break;
           }
+          Rsvim.cmd.echo(`readDirSync: ${entry.fileName}`);
           yield entry;
         }
       },
