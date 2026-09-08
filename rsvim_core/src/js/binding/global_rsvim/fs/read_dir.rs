@@ -108,7 +108,10 @@ pub fn fs_read_dir_next_s(
             Err(e) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
           }
         }
-        None => None,
+        None => {
+          trace!("fs_read_dir_next_s rid:{:?}, None", rid);
+          None
+        }
       }
     }
     _ => unreachable!(),
