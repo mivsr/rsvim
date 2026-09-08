@@ -620,29 +620,29 @@ export namespace RsvimFs {
    * }
    * ```
    */
-  export function readDir(path: string): AsyncIterable<RsvimFs.DirEntry> {
+  export async function* readDir(
+    path: string,
+  ): AsyncIterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
     // @ts-ignore Ignore warning
     const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
 
-    const it = {
-      async *[Symbol.asyncIterator]() {
-        while (true) {
-          const entry =
-            // @ts-ignore Ignore warning
-            await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
-          if (entry == null) {
-            Rsvim.cmd.echo(`readDir: null`);
-            break;
-          }
-          Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
-          yield entry;
+    try {
+      while (true) {
+        const entry =
+          // @ts-ignore Ignore warning
+          await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+        if (entry == null) {
+          Rsvim.cmd.echo(`readDir: null`);
+          break;
         }
-      },
-    };
-
-    return it;
+        Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
+        yield entry;
+      }
+    } finally {
+      // TODO: Close rid handle here...
+    }
   }
 
   /**
@@ -660,28 +660,26 @@ export namespace RsvimFs {
    * }
    * ```
    */
-  export function readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
+  export function* readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDirSync" path`);
 
     // @ts-ignore Ignore warning
     const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
 
-    const it = {
-      *[Symbol.iterator]() {
-        while (true) {
-          // @ts-ignore Ignore warning
-          const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
-          if (entry == null) {
-            Rsvim.cmd.echo(`readDirSync: null`);
-            break;
-          }
-          Rsvim.cmd.echo(`readDirSync: ${entry.fileName}`);
-          yield entry;
+    try {
+      while (true) {
+        // @ts-ignore Ignore warning
+        const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+        if (entry == null) {
+          Rsvim.cmd.echo(`readDirSync: null`);
+          break;
         }
-      },
-    };
-
-    return it;
+        Rsvim.cmd.echo(`readDirSync: ${entry.fileName}`);
+        yield entry;
+      }
+    } finally {
+      // TODO: Close rid handle here...
+    }
   }
 
   /**
@@ -2627,7 +2625,7 @@ export namespace Rsvim {
 // by capturing the "Rsvim" namespace type BEFORE global object "Rsvim" shadows it.
 type RsvimNamespaceType = typeof Rsvim;
 
-(function(globalThis: { Rsvim: RsvimNamespaceType }) {
+(function (globalThis: { Rsvim: RsvimNamespaceType }) {
   globalThis.Rsvim = Rsvim;
 })(globalThis as unknown as { Rsvim: RsvimNamespaceType });
 

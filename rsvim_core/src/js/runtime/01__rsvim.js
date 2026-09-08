@@ -472,26 +472,26 @@ export var RsvimFs;
      * }
      * ```
      */
-    function readDir(path) {
+    async function* readDir(path) {
         checkIsString(path, `"Rsvim.fs.readDir" path`);
         // @ts-ignore Ignore warning
         const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
-        const it = {
-            async *[Symbol.asyncIterator]() {
-                while (true) {
-                    const entry = 
-                    // @ts-ignore Ignore warning
-                    await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
-                    Rsvim.cmd.echo(`readDir`);
-                    Rsvim.cmd.echo(entry);
-                    if (entry == null) {
-                        break;
-                    }
-                    yield entry;
+        try {
+            while (true) {
+                const entry = 
+                // @ts-ignore Ignore warning
+                await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+                if (entry == null) {
+                    Rsvim.cmd.echo(`readDir: null`);
+                    break;
                 }
-            },
-        };
-        return it;
+                Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
+                yield entry;
+            }
+        }
+        finally {
+            // TODO: Close rid handle here...
+        }
     }
     RsvimFs.readDir = readDir;
     /**
@@ -509,25 +509,25 @@ export var RsvimFs;
      * }
      * ```
      */
-    function readDirSync(path) {
+    function* readDirSync(path) {
         checkIsString(path, `"Rsvim.fs.readDirSync" path`);
         // @ts-ignore Ignore warning
         const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
-        const it = {
-            *[Symbol.iterator]() {
-                while (true) {
-                    // @ts-ignore Ignore warning
-                    const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
-                    Rsvim.cmd.echo(`readDirSync`);
-                    Rsvim.cmd.echo(entry);
-                    if (entry == null) {
-                        break;
-                    }
-                    yield entry;
+        try {
+            while (true) {
+                // @ts-ignore Ignore warning
+                const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+                if (entry == null) {
+                    Rsvim.cmd.echo(`readDirSync: null`);
+                    break;
                 }
-            },
-        };
-        return it;
+                Rsvim.cmd.echo(`readDirSync: ${entry.fileName}`);
+                yield entry;
+            }
+        }
+        finally {
+            // TODO: Close rid handle here...
+        }
     }
     RsvimFs.readDirSync = readDirSync;
     /**
