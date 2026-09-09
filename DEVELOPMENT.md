@@ -8,8 +8,9 @@ Please setup your development environment with:
   - For Linux, install [gcc](https://gcc.gnu.org/).
   - For macOS, install [Xcode Clang](https://developer.apple.com/xcode/).
   - For Windows, install [Visual Studio with C++/C# Desktop Components](https://visualstudio.microsoft.com/).
-- Install [mise](https://github.com/jdx/mise), then run `mise i` and `npm i`.
-- (Optional) Faster linker for linux, install [clang](https://llvm.org/), [mold](https://github.com/rui314/mold)/[wild](https://github.com/davidlattimore/wild).
+- Install [rust](https://rust-lang.org/tools/install/).
+- Install [mise](https://github.com/jdx/mise), then run `mise i`.
+- (Optional) Faster linker for linux, install [clang](https://llvm.org/), [mold](https://github.com/rui314/mold).
 
 ## Repository
 
