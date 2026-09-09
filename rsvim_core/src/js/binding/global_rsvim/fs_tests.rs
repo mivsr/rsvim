@@ -1214,3 +1214,69 @@ async fn test_fs_mkdir2() -> IoResult<()> {
 
   Ok(())
 }
+
+#[tokio::test]
+#[cfg_attr(miri, ignore)]
+async fn test_read_dir1() -> IoResult<()> {
+  test_log_init();
+
+  let target = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
+  info!("target:{:?}", target);
+
+  // case-1: pure rust implementation
+  {
+    match std::fs::read_dir(target) {
+      Ok(rd) => {
+        // for-in automatically handles `None` returned from `rd`
+        for it in rd {
+          match it {
+            Ok(entry) => {
+              info!("case-1 next: {:?}", entry);
+            }
+            Err(e) => {
+              info!("case-1 next failed: {:?}", e);
+            }
+          }
+        }
+      }
+      Err(e) => {
+        info!("case-1 read_dir failed: {:?}", e);
+      }
+    }
+  }
+
+  // case-2: resource table implementation
+  {
+    match std::fs::read_dir(target) {
+      Ok(rd) => {
+        let rd_obj = std::sync::Arc::new(std::sync::Mutex::new(rd));
+        loop {
+          let mut rd_obj2 = rd_obj.lock().unwrap();
+          let it = rd_obj2.next();
+          match it {
+            Some(it2) => match it2 {
+              Ok(entry) => {
+                info!("case-2 next: {:?}", entry);
+              }
+              Err(e) => {
+                info!("case-2 next failed: {:?}", e);
+              }
+            },
+            None => {
+              info!("case-2 next: None");
+              break;
+            }
+          }
+        }
+      }
+      Err(e) => {
+        info!("case-2 read_dir failed: {:?}", e);
+      }
+    }
+  }
+
+  Ok(())
+}
