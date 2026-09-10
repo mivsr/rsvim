@@ -606,8 +606,6 @@ export namespace RsvimFs {
   /**
    * Read a directory with async iterator.
    *
-   * Note: This function itself is sync, but the value it returned is an async iterable.
-   *
    * @param {string} path - Directory path to read.
    * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of {@link RsvimFs.DirEntry}.
    *
