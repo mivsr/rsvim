@@ -648,6 +648,47 @@ export namespace RsvimFs {
   }
 
   /**
+   * Sync version of {@link readDir}.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {Iterable<RsvimFs.DirEntry>} Iterator - An iterable of {@link RsvimFs.DirEntry}.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * for (const entry of Rsvim.fs.readDirSync(".")) {
+   *   Rsvim.cmd.echo(entry.name);
+   * }
+   * ```
+   */
+  export function* readDirSync(path: string): Iterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDirSync" path`);
+
+    let rid: number | undefined | null;
+
+    try {
+      // @ts-ignore Ignore warning
+      rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+
+      while (true) {
+        // @ts-ignore Ignore warning
+        const entry = __InternalRsvimGlobalObject.fs_read_dir_next_sync(rid);
+        if (entry == null) {
+          break;
+        }
+        yield entry as RsvimFs.DirEntry;
+      }
+    } finally {
+      if (rid != null) {
+        // @ts-ignore Ignore warning
+        __InternalRsvimGlobalObject.fs_read_dir_close(rid);
+        rid = null;
+      }
+    }
+  }
+
+  /**
    * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
    *
    * @param {string} path - File path to read.
