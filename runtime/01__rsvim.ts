@@ -626,7 +626,7 @@ export namespace RsvimFs {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
     // @ts-ignore Ignore warning
-    const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+    let rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
 
     try {
       while (true) {
@@ -642,7 +642,11 @@ export namespace RsvimFs {
         yield entry;
       }
     } finally {
-      // TODO: Close rid handle here...
+      if (rid) {
+        // @ts-ignore Ignore warning
+        __InternalRsvimGlobalObject.fs_read_dir_close(rid);
+        rid = null;
+      }
     }
   }
 
