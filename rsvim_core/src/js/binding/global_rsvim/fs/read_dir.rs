@@ -164,9 +164,9 @@ pub fn fs_read_dir_next_s(
       match rd.next() {
         Some(Ok(entry)) => Some(Ok(FsDirEntry {
           name: entry.file_name().to_string_lossy().to_string(),
-          is_file: entry.metadata().map(|mt| mt.is_file()).ok(),
-          is_dir: entry.metadata().map(|mt| mt.is_dir()).ok(),
-          is_symlink: entry.metadata().map(|mt| mt.is_symlink()).ok(),
+          is_file: entry.file_type().map(|ft| ft.is_file()).ok(),
+          is_dir: entry.file_type().map(|ft| ft.is_dir()).ok(),
+          is_symlink: entry.file_type().map(|ft| ft.is_symlink()).ok(),
         })),
         Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
         None => None,
