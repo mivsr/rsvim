@@ -13,6 +13,31 @@ use crate::js::resource::ResourceId;
 use crate::js::resource::ResourceTableArc;
 use crate::prelude::*;
 
+#[derive(
+  Debug,
+  Clone,
+  PartialEq,
+  Eq,
+  derive_builder::Builder,
+  serde::Serialize,
+  serde::Deserialize,
+  rsvim_macro::ToV8,
+  rsvim_macro::FromV8,
+)]
+pub struct FsDirEntry {
+  #[builder(default = "".to_string())]
+  pub name: String,
+
+  #[builder(default = false)]
+  pub is_dir: bool,
+
+  #[builder(default = false)]
+  pub is_file: bool,
+
+  #[builder(default = false)]
+  pub is_symlink: bool,
+}
+
 pub fn fs_read_dir_s(
   resource_table: ResourceTableArc,
   path: &Path,
@@ -125,28 +150,6 @@ pub fn read_dir_sync<'s>(
       binding::throw_exception(scope, &e);
     }
   }
-}
-
-#[derive(
-  Debug,
-  Clone,
-  PartialEq,
-  Eq,
-  derive_builder::Builder,
-  serde::Serialize,
-  serde::Deserialize,
-  rsvim_macro::ToV8,
-  rsvim_macro::FromV8,
-)]
-pub struct FsDirEntry {
-  #[builder(default = "".to_string())]
-  pub file_name: String,
-
-  #[builder(default = None)]
-  pub metadata: Option<FsMetadata>,
-
-  #[builder(default = "".to_string())]
-  pub path: String,
 }
 
 pub fn fs_read_dir_next_s(
