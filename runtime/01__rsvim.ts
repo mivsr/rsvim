@@ -623,24 +623,23 @@ export namespace RsvimFs {
   ): AsyncIterable<RsvimFs.DirEntry> {
     checkIsString(path, `"Rsvim.fs.readDir" path`);
 
-    // @ts-ignore Ignore warning
-    let rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+    let rid: number | undefined | null;
 
     try {
+      // @ts-ignore Ignore warning
+      rid = await __InternalRsvimGlobalObject.fs_read_dir_async(path);
+
       while (true) {
         const entry =
           // @ts-ignore Ignore warning
           await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
-        Rsvim.cmd.echo(`readDir: ${entry}`);
         if (entry == null) {
-          Rsvim.cmd.echo(`readDir: null`);
           break;
         }
-        Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
-        yield entry;
+        yield entry as RsvimFs.DirEntry;
       }
     } finally {
-      if (rid) {
+      if (rid != null) {
         // @ts-ignore Ignore warning
         __InternalRsvimGlobalObject.fs_read_dir_close(rid);
         rid = null;
