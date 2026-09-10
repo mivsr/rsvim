@@ -5,8 +5,6 @@ use crate::js;
 use crate::js::JsFuture;
 use crate::js::JsRuntime;
 use crate::js::binding;
-use crate::js::binding::global_rsvim::fs::metadata;
-use crate::js::binding::global_rsvim::fs::metadata::FsMetadata;
 use crate::js::converter::*;
 use crate::js::pending;
 use crate::js::resource::ResourceId;
@@ -28,14 +26,14 @@ pub struct FsDirEntry {
   #[builder(default = "".to_string())]
   pub name: String,
 
-  #[builder(default = false)]
-  pub is_dir: bool,
+  #[builder(default = None)]
+  pub is_dir: Option<bool>,
 
-  #[builder(default = false)]
-  pub is_file: bool,
+  #[builder(default = None)]
+  pub is_file: Option<bool>,
 
-  #[builder(default = false)]
-  pub is_symlink: bool,
+  #[builder(default = None)]
+  pub is_symlink: Option<bool>,
 }
 
 pub fn fs_read_dir_s(
@@ -164,9 +162,10 @@ pub fn fs_read_dir_next_s(
       let mut rd = lock!(rd);
       match rd.next() {
         Some(Ok(entry)) => Some(Ok(FsDirEntry {
-          file_name: entry.file_name().to_string_lossy().to_string(),
-          metadata: entry.metadata().ok().map(metadata::convert),
-          path: entry.path().to_string_lossy().to_string(),
+          name: entry.file_name().to_string_lossy().to_string(),
+          is_file: entry.metadata().map(|mt| mt.is_file()).ok(),
+          is_dir: entry.metadata().map(|mt| mt.is_dir()).ok(),
+          is_symlink: entry.metadata().map(|mt| mt.is_symlink()).ok(),
         })),
         Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
         None => None,
