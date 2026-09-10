@@ -27,14 +27,14 @@ pub struct FsDirEntry {
   #[builder(default = "".to_string())]
   pub name: String,
 
-  #[builder(default = None)]
-  pub is_dir: Option<bool>,
+  #[builder(default = false)]
+  pub is_dir: bool,
 
-  #[builder(default = None)]
-  pub is_file: Option<bool>,
+  #[builder(default = false)]
+  pub is_file: bool,
 
-  #[builder(default = None)]
-  pub is_symlink: Option<bool>,
+  #[builder(default = false)]
+  pub is_symlink: bool,
 }
 
 pub fn fs_read_dir_s(
@@ -162,12 +162,15 @@ pub fn fs_read_dir_next_s(
       let rd = rd.data();
       let mut rd = lock!(rd);
       match rd.next() {
-        Some(Ok(entry)) => Some(Ok(FsDirEntry {
-          name: entry.file_name().to_string_lossy().to_string(),
-          is_file: entry.file_type().map(|ft| ft.is_file()).ok(),
-          is_dir: entry.file_type().map(|ft| ft.is_dir()).ok(),
-          is_symlink: entry.file_type().map(|ft| ft.is_symlink()).ok(),
-        })),
+        Some(Ok(entry)) => match entry.file_type() {
+          Ok(entry_ft) => Some(Ok(FsDirEntry {
+            name: entry.file_name().to_string_lossy().to_string(),
+            is_file: entry_ft.is_file(),
+            is_dir: entry_ft.is_dir(),
+            is_symlink: entry_ft.is_symlink(),
+          })),
+          Err(e) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
+        },
         Some(Err(e)) => Some(Err(TheErr::ReadDirectoryByRidFailed(rid, e))),
         None => None,
       }

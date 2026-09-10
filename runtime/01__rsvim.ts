@@ -1245,17 +1245,17 @@ export namespace RsvimFs {
     /**
      * Whether it is a directory.
      */
-    isDir?: boolean;
+    isDir: boolean;
 
     /**
      * Whether it is a normal file.
      */
-    isFile?: boolean;
+    isFile: boolean;
 
     /**
      * Whether it is a symbolic link.
      */
-    isSymlink?: boolean;
+    isSymlink: boolean;
   };
 
   /**
