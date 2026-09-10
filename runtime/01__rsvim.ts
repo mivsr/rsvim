@@ -604,6 +604,49 @@ export namespace RsvimFs {
   }
 
   /**
+   * Read a directory with async iterator.
+   *
+   * Note: This function itself is sync, but the value it returned is an async iterable.
+   *
+   * @param {string} path - Directory path to read.
+   * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of {@link RsvimFs.DirEntry}.
+   *
+   * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+   *
+   * @example
+   * ```javascript
+   * for await (const entry of Rsvim.fs.readDir(".")) {
+   *   Rsvim.cmd.echo(entry.name);
+   * }
+   * ```
+   */
+  export async function* readDir(
+    path: string,
+  ): AsyncIterable<RsvimFs.DirEntry> {
+    checkIsString(path, `"Rsvim.fs.readDir" path`);
+
+    // @ts-ignore Ignore warning
+    const rid = __InternalRsvimGlobalObject.fs_read_dir_sync(path);
+
+    try {
+      while (true) {
+        const entry =
+          // @ts-ignore Ignore warning
+          await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+        Rsvim.cmd.echo(`readDir: ${entry}`);
+        if (entry == null) {
+          Rsvim.cmd.echo(`readDir: null`);
+          break;
+        }
+        Rsvim.cmd.echo(`readDir: ${entry.fileName}`);
+        yield entry;
+      }
+    } finally {
+      // TODO: Close rid handle here...
+    }
+  }
+
+  /**
    * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
    *
    * @param {string} path - File path to read.
@@ -1187,6 +1230,31 @@ export namespace RsvimFs {
       return __InternalRsvimGlobalObject.fs_write_sync(this.#rid, buf.buffer);
     }
   }
+
+  /**
+   * Directory entry returned from {@link RsvimFs.readDir} and {@link RsvimFs.readDirSync}.
+   */
+  export type DirEntry = {
+    /**
+     * File name.
+     */
+    fileName: string;
+
+    /**
+     * Whether it is a directory.
+     */
+    isDir?: boolean;
+
+    /**
+     * Whether it is a normal file.
+     */
+    isFile?: boolean;
+
+    /**
+     * Whether it is a symbolic link.
+     */
+    isSymlink?: boolean;
+  };
 
   /**
    * File information, it contains 3 groups of properties:
