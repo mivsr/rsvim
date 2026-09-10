@@ -235,7 +235,7 @@ pub fn read_dir_next_async<'s>(
   args: v8::FunctionCallbackArguments<'s>,
   mut rv: v8::ReturnValue,
 ) {
-  let filename = _get_args(scope, args);
+  let rid = _get_next_args(scope, args);
 
   let promise_resolver = v8::PromiseResolver::new(scope).unwrap();
   let promise = promise_resolver.get_promise(scope);
@@ -245,7 +245,7 @@ pub fn read_dir_next_async<'s>(
     let promise = v8::Global::new(scope, promise_resolver);
     let state_rc = state_rc.clone();
     move |maybe_result: Option<TheResult<Vec<u8>>>| {
-      let fut = FsReadDirFuture {
+      let fut = FsReadDirNextFuture {
         promise: promise.clone(),
         maybe_result,
       };
@@ -256,12 +256,32 @@ pub fn read_dir_next_async<'s>(
 
   let mut state = state_rc.borrow_mut();
   let task_id = js::TaskId::next();
-  pending::create_fs_read_dir(
-    &mut state,
-    task_id,
-    Path::new(&filename),
-    Box::new(read_cb),
-  );
+  pending::create_fs_read_dir_next(&mut state, task_id, rid, Box::new(read_cb));
 
   rv.set(promise.into());
+}
+
+/// `Rsvim.fs.readDirSync` API.
+pub fn read_dir_next_sync<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut rv: v8::ReturnValue,
+) {
+  let rid = _get_next_args(scope, args);
+
+  let state_rc = JsRuntime::state(scope);
+  let resource_table = state_rc.borrow().resource_table.clone();
+
+  match fs_read_dir_next_s(resource_table, rid) {
+    Some(Ok(entry)) => {
+      let entry = entry.to_v8(scope);
+      rv.set(entry);
+    }
+    Some(Err(e)) => {
+      binding::throw_exception(scope, &e);
+    }
+    None => {
+      rv.set_undefined();
+    }
+  }
 }
