@@ -23,6 +23,7 @@ pub use open::open_sync;
 pub use read::read_async;
 pub use read::read_sync;
 pub use read_dir::read_dir_async;
+pub use read_dir::read_dir_close;
 pub use read_dir::read_dir_next_async;
 pub use read_dir::read_dir_next_sync;
 pub use read_dir::read_dir_sync;

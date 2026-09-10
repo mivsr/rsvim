@@ -285,3 +285,18 @@ pub fn read_dir_next_sync<'s>(
     }
   }
 }
+
+/// `Rsvim.fs.readDir` and `Rsvim.fs.readDirSync` API.
+pub fn read_dir_close<'s>(
+  scope: &mut v8::PinScope<'s, '_>,
+  args: v8::FunctionCallbackArguments<'s>,
+  mut _rv: v8::ReturnValue,
+) {
+  let rid = _get_next_args(scope, args);
+
+  let state_rc = JsRuntime::state(scope);
+  let resource_table = state_rc.borrow().resource_table.clone();
+  let mut resource_table = lock!(resource_table);
+  let mut rd = resource_table.remove(&rid);
+  let _ = rd.take();
+}
