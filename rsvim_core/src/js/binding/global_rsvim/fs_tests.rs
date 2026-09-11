@@ -1320,9 +1320,18 @@ async fn test_read_dir1() -> IoResult<()> {
 
   // After running
   {
-    let contents = lock!(event_loop.cmdline_text);
+    let mut contents = lock!(event_loop.cmdline_text);
     let n = contents.message_history().len();
-    assert_eq!(n, 0);
+    assert_eq!(n, 28);
+
+    let msg_re = Regex::new(r"^name:.*,file:(?:true|false),dir:(?:true|false),symlink:(?:true|false)$").unwrap();
+    for i in 0..n {
+      let msg = contents.message_history_mut().pop();
+      assert!(msg.is_some());
+      let msg = msg.unwrap();
+      info!("{}:{:?}", i, msg);
+      assert!(msg_re.is_match(&msg));
+    }
   }
 
   Ok(())
