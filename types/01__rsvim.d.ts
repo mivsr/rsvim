@@ -337,6 +337,38 @@ export declare namespace RsvimFs {
      */
     function openSync(path: string, options?: RsvimFs.OpenOptions): RsvimFs.File;
     /**
+     * Read a directory with async iterator.
+     *
+     * @param {string} path - Directory path to read.
+     * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of {@link RsvimFs.DirEntry}.
+     *
+     * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+     *
+     * @example
+     * ```javascript
+     * for await (const entry of Rsvim.fs.readDir(".")) {
+     *   Rsvim.cmd.echo(entry.name);
+     * }
+     * ```
+     */
+    function readDir(path: string): AsyncIterable<RsvimFs.DirEntry>;
+    /**
+     * Sync version of {@link readDir}.
+     *
+     * @param {string} path - Directory path to read.
+     * @returns {Iterable<RsvimFs.DirEntry>} Iterator - An iterable of {@link RsvimFs.DirEntry}.
+     *
+     * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
+     *
+     * @example
+     * ```javascript
+     * for (const entry of Rsvim.fs.readDirSync(".")) {
+     *   Rsvim.cmd.echo(entry.name);
+     * }
+     * ```
+     */
+    function readDirSync(path: string): Iterable<RsvimFs.DirEntry>;
+    /**
      * Read a file in binary mode, i.e. into an array of bytes buffer, without open/close a file descriptor/handle.
      *
      * @param {string} path - File path to read.
@@ -722,6 +754,27 @@ export declare namespace RsvimFs {
          */
         writeSync(buf: Uint8Array): number;
     }
+    /**
+     * Directory entry returned from {@link RsvimFs.readDir} and {@link RsvimFs.readDirSync}.
+     */
+    type DirEntry = {
+        /**
+         * File name.
+         */
+        fileName: string;
+        /**
+         * Whether it is a directory.
+         */
+        isDir: boolean;
+        /**
+         * Whether it is a normal file.
+         */
+        isFile: boolean;
+        /**
+         * Whether it is a symbolic link.
+         */
+        isSymlink: boolean;
+    };
     /**
      * File information, it contains 3 groups of properties:
      * - Common properties that are available for all platforms.

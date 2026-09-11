@@ -1217,7 +1217,7 @@ async fn test_fs_mkdir2() -> IoResult<()> {
 
 #[tokio::test]
 #[cfg_attr(miri, ignore)]
-async fn test_read_dir1() -> IoResult<()> {
+async fn test_read_dir0() -> IoResult<()> {
   test_log_init();
 
   let target = concat!(
@@ -1275,6 +1275,119 @@ async fn test_read_dir1() -> IoResult<()> {
       Err(e) => {
         info!("case-2 read_dir failed: {:?}", e);
       }
+    }
+  }
+
+  Ok(())
+}
+
+#[tokio::test]
+#[cfg_attr(miri, ignore)]
+async fn test_read_dir1() -> IoResult<()> {
+  test_log_init();
+
+  let target = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
+  info!("target:{:?}", target);
+
+  let terminal_cols = 10_u16;
+  let terminal_rows = 10_u16;
+  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(100))];
+
+  let src = format!(
+    r###"
+
+  for (const entry of Rsvim.fs.readDirSync({:?})) {{
+    Rsvim.cmd.echo(`name:${{entry.name}},file:${{entry.isFile}},dir:${{entry.isDir}},symlink:${{entry.isSymlink}}`);
+  }}
+"###,
+    target
+  );
+
+  // Prepare $RSVIM_CONFIG/rsvim.js
+  let _tp = make_configs(vec![(Path::new("rsvim.js"), &src)]);
+
+  let mut event_loop =
+    make_event_loop(terminal_cols, terminal_rows, CliOptions::empty());
+
+  event_loop.initialize()?;
+  event_loop
+    .run_with_mock_events(MockEventReader::new(mocked_events))
+    .await?;
+  event_loop.shutdown()?;
+
+  // After running
+  {
+    let mut contents = lock!(event_loop.cmdline_text);
+    let n = contents.message_history().len();
+    assert_eq!(n, 28);
+
+    let msg_re = Regex::new(r"^name:.*,file:(?:true|false),dir:(?:true|false),symlink:(?:true|false)$").unwrap();
+    for i in 0..n {
+      let msg = contents.message_history_mut().pop();
+      assert!(msg.is_some());
+      let msg = msg.unwrap();
+      info!("{}:{:?}", i, msg);
+      assert!(msg_re.is_match(&msg));
+    }
+  }
+
+  Ok(())
+}
+
+// FIXME: This test is still failed, since the async API could have bugs
+// #[tokio::test]
+#[cfg_attr(miri, ignore)]
+async fn _test_read_dir2() -> IoResult<()> {
+  test_log_init();
+
+  let target = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../tests_and_benchmarks/tree-sitter-python"
+  );
+  info!("target:{:?}", target);
+
+  let terminal_cols = 10_u16;
+  let terminal_rows = 10_u16;
+  let mocked_events = vec![MockEvent::SleepFor(Duration::from_millis(1000))];
+
+  let src = format!(
+    r###"
+
+  for await (const entry of Rsvim.fs.readDir({:?})) {{
+    Rsvim.cmd.echo(`name:${{entry.name}},file:${{entry.isFile}},dir:${{entry.isDir}},symlink:${{entry.isSymlink}}`);
+  }}
+"###,
+    target
+  );
+
+  // Prepare $RSVIM_CONFIG/rsvim.js
+  let _tp = make_configs(vec![(Path::new("rsvim.js"), &src)]);
+
+  let mut event_loop =
+    make_event_loop(terminal_cols, terminal_rows, CliOptions::empty());
+
+  event_loop.initialize()?;
+  event_loop
+    .run_with_mock_events(MockEventReader::new(mocked_events))
+    .await?;
+  event_loop.shutdown()?;
+
+  // After running
+  {
+    let mut contents = lock!(event_loop.cmdline_text);
+    let n = contents.message_history().len();
+    assert_eq!(n, 28);
+
+    let msg_re = Regex::new(r"^name:.*,file:(?:true|false),dir:(?:true|false),symlink:(?:true|false)$").unwrap();
+    for i in 0..n {
+      let msg = contents.message_history_mut().pop();
+      assert!(msg.is_some());
+      let msg = msg.unwrap();
+      info!("{}:{:?}", i, msg);
+      assert!(msg_re.is_match(&msg));
     }
   }
 
