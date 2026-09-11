@@ -479,6 +479,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "compact_str"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79fcda08c33bb58b97008b2cdada6622500e949e060f5913361763121abd2416"
+dependencies = [
+ "castaway",
+ "cfg-if",
+ "itoa",
+ "static_assertions",
+ "zmij",
+]
+
+[[package]]
 name = "convert_case"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3861,7 +3874,7 @@ dependencies = [
  "async-trait",
  "bitflags 2.13.1",
  "clap",
- "compact_str 0.9.1",
+ "compact_str 0.10.0",
  "criterion",
  "crossterm",
  "deno_core_icudata",
