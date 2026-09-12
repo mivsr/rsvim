@@ -103,9 +103,8 @@ unicode-width = "0.2"
 
 # NOTE: Javascript dependencies always keep the same with `deno` {
 
-# deno: https://github.com/denoland/deno/blob/v2.5.4/Cargo.toml
-# deno_core: https://github.com/denoland/deno_core/blob/0.362.0/Cargo.toml
-# deno_ast: https://github.com/denoland/deno_ast/blob/0.50.3/Cargo.toml
+# deno: https://github.com/denoland/deno/blob/main/Cargo.toml
+# deno_ast: https://github.com/denoland/deno_ast/blob/main/Cargo.toml
 
 swc_atoms = "=10.0.0"
 swc_bundler = "=54.0.0"
@@ -162,10 +161,12 @@ opt-level = 1
 debug = true
 debug-assertions = true
 inherits = "release"
+panic = "unwind"
 
 # Release
 [profile.release]
 codegen-units = 1
 lto = true
 opt-level = "s"
+panic = "abort"
 strip = true
