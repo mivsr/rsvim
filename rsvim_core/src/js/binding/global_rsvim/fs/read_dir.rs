@@ -44,7 +44,9 @@ pub fn fs_read_dir_s(
   match std::fs::read_dir(path) {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
-      Ok(resource_table.add_read_dir(rd))
+      let rid = resource_table.add_read_dir(rd);
+      trace!("fs_read_dir_s path:{:?}, rid:{:?}", path, rid);
+      Ok(rid)
     }
     Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }
@@ -73,6 +75,7 @@ impl JsFuture for FsReadDirFuture {
     // Otherwise, resolve the promise passing the result.
     let result = result.unwrap();
     let rid = postcard::from_bytes::<ResourceId>(&result).unwrap();
+    trace!("FsReadDirFuture rid:{:?}", rid);
     let rid = Into::<i32>::into(rid);
     let rid = rid.to_v8(scope);
 

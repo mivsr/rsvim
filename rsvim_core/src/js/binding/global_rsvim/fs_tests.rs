@@ -1337,10 +1337,9 @@ async fn test_read_dir1() -> IoResult<()> {
   Ok(())
 }
 
-// FIXME: This test is still failed, since the async API could have bugs
-// #[tokio::test]
+#[tokio::test]
 #[cfg_attr(miri, ignore)]
-async fn _test_read_dir2() -> IoResult<()> {
+async fn test_read_dir2() -> IoResult<()> {
   test_log_init();
 
   let target = concat!(
