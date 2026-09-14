@@ -459,7 +459,7 @@ export var RsvimFs;
      * Read a directory with async iterator.
      *
      * @param {string} path - Directory path to read.
-     * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator - An async iterable of {@link RsvimFs.DirEntry}.
+     * @returns {AsyncIterable<RsvimFs.DirEntry>} Async iterator.
      *
      * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
      *
@@ -499,7 +499,7 @@ export var RsvimFs;
      * Sync version of {@link readDir}.
      *
      * @param {string} path - Directory path to read.
-     * @returns {Iterable<RsvimFs.DirEntry>} Iterator - An iterable of {@link RsvimFs.DirEntry}.
+     * @returns {Iterable<RsvimFs.DirEntry>} Iterator.
      *
      * @throws Throws {@link !TypeError} if the path is invalid. Or throws {@link Error} if failed to read the directory.
      *
