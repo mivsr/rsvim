@@ -41,6 +41,7 @@ pub fn fs_read_dir_s(
   resource_table: ResourceTableArc,
   path: &Path,
 ) -> TheResult<ResourceId> {
+  trace!("fs_read_dir_s path:{:?}", path);
   match std::fs::read_dir(path) {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
