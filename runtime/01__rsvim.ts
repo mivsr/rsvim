@@ -260,9 +260,9 @@ export namespace RsvimCmd {
    * :::
    *
    * @param {string} name - Command name that is going to create. Only letters (`a-z` and `A-Z`), digits (`0-9`), underscore (`_`) and exclamation (`!`) are allowed in a command name. Command name must not begin with a digit.
-   * @param {RsvimCmd.CommandCallback} callback - Async callback function that implements the command. It accepts an `ctx` parameter that contains all the information when user is running it. See {@link RsvimCmd.CommandCallback}.
-   * @param {RsvimCmd.CommandAttributes} attributes - (Optional) Attributes that control the command behavior, by default is `{bang:false, nargs:"0"}`, see {@link RsvimCmd.CommandAttributes}.
-   * @param {RsvimCmd.CommandOptions} options - (Optional) Options that control how the command is created, by default is `{force:true}`, see {@link RsvimCmd.CommandOptions}.
+   * @param {RsvimCmd.CommandCallback} callback - Callback function that implements the command. It accepts an `ctx` parameter that contains all the information when user is running it.
+   * @param {RsvimCmd.CommandAttributes} attributes - (Optional) Attributes that control the command behavior, by default is `{bang:false, nargs:"0"}`.
+   * @param {RsvimCmd.CommandOptions} options - (Optional) Options that control how the command is created, by default is `{force:true}`.
    * @returns {(RsvimCmd.CommandDefinition | undefined)} It returns `undefined` is the command is newly created. Or it returns a command definition that was defined previously.
    *
    * @throws Throws {@link !TypeError} if any parameters are invalid. Or throws {@link Error} if command name or alias already exists, but `force` option is not set to override existing command forcibly.
@@ -465,14 +465,16 @@ export namespace RsvimCmd {
   };
 
   /**
-   * Command callback function, this is the backend logic that implements a user ex command.
+   * Command callback function, the backend logic that implements a user ex command.
+   *
+   * Note: The callback function can be either sync or async.
    *
    * It accepts a `ctx` parameter that indicates runtime information when the command is executed.
    *
    * @see {@link RsvimCmd.create}
-   * @see {@link CommandContext}
+   * @see {@link RsvimCmd.CommandContext}
 ,  */
-  export type CommandCallback = (ctx: CommandContext) => Promise<void>;
+  export type CommandCallback = (ctx: CommandContext) => void | Promise<void>;
 
   /**
    * Command definition.
