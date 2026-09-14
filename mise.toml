@@ -1,4 +1,13 @@
 [tools]
+rust = { version = "stable", components = "rust-src,rust-analyzer" }
+
+"cargo:cargo-nextest" = "latest"
+"cargo:cargo-release" = "latest"
+"cargo:git-cliff" = "latest"
+"cargo:sccache" = "latest"
+"cargo:taplo-cli" = "latest"
+"cargo:typos-cli" = "latest"
+
 node = "latest"
 "npm:browser-sync" = "latest"
 "npm:markdownlint" = "latest"
