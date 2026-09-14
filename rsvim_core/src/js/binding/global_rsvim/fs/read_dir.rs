@@ -44,7 +44,8 @@ pub fn fs_read_dir_s(
   match std::fs::read_dir(path) {
     Ok(rd) => {
       let mut resource_table = lock!(resource_table);
-      Ok(resource_table.add_read_dir(rd))
+      let rid = resource_table.add_read_dir(rd);
+      Ok(rid)
     }
     Err(e) => Err(TheErr::ReadDirectoryByPathFailed(path.to_path_buf(), e)),
   }

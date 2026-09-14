@@ -475,11 +475,11 @@ export var RsvimFs;
         let rid;
         try {
             // @ts-ignore Ignore warning
-            rid = await __InternalRsvimGlobalObject.fs_read_dir_async(path);
+            rid = await __InternalRsvimGlobalObject.fs_read_dir(path);
             while (true) {
                 const entry = 
                 // @ts-ignore Ignore warning
-                await __InternalRsvimGlobalObject.fs_read_dir_next_async(rid);
+                await __InternalRsvimGlobalObject.fs_read_dir_next(rid);
                 if (entry == null) {
                     break;
                 }
