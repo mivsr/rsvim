@@ -10,6 +10,7 @@
 //!   - <https://github.com/denoland/deno_core/commit/b9b65142c74d88e9245dde2230727e537256d685>.
 //! - V8 API Reference: <https://v8docs.nodesource.com/node-24.1/index.html>.
 
+pub mod autocmd;
 pub mod binding;
 pub mod command;
 pub mod converter;
