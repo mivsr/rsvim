@@ -15,7 +15,7 @@ pub type AutoCmdCallback = Rc<v8::Global<v8::Function>>;
 #[derive(
   Copy, Clone, rsvim_macro::IncrementalId, serde::Serialize, serde::Deserialize,
 )]
-pub struct AutoCmdId(#[start_from(1)] usize);
+pub struct AutoCmdId(#[start_from(1)] i32);
 
 #[derive_where::derive_where(Debug)]
 #[derive(Clone, rsvim_macro::ToV8, rsvim_macro::RcPtr)]

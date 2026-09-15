@@ -7,6 +7,7 @@ use crate::is_v8_int;
 use crate::is_v8_number;
 use crate::is_v8_str;
 use crate::js::TimerId;
+use crate::js::autocmd::def::AutoCmdId;
 use crate::prelude::*;
 use crate::ui::tree::NodeId;
 use compact_str::CompactString;
@@ -303,6 +304,27 @@ impl FromV8 for TimerId {
   ) -> Self {
     debug_assert!(is_v8_int!(value));
     TimerId::from(value.to_integer(scope).unwrap().int32_value(scope).unwrap())
+  }
+}
+
+impl ToV8 for AutoCmdId {
+  fn to_v8<'s>(
+    &self,
+    scope: &mut v8::PinScope<'s, '_>,
+  ) -> v8::Local<'s, v8::Value> {
+    v8::Integer::new(scope, Into::<i32>::into(*self)).into()
+  }
+}
+
+impl FromV8 for AutoCmdId {
+  fn from_v8<'s>(
+    scope: &mut v8::PinScope<'s, '_>,
+    value: v8::Local<'s, v8::Value>,
+  ) -> Self {
+    debug_assert!(is_v8_int!(value));
+    AutoCmdId::from(
+      value.to_integer(scope).unwrap().int32_value(scope).unwrap(),
+    )
   }
 }
 
