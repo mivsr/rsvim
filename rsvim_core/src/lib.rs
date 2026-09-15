@@ -1,5 +1,6 @@
 //! The core library for the [RSVIM](https://github.com/rsvim/rsvim) editor.
 
+pub mod autocmd;
 pub mod buf;
 pub mod cfg;
 pub mod chan;
