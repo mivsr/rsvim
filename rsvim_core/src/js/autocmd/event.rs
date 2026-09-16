@@ -3,6 +3,7 @@
 use crate::js::converter::*;
 use compact_str::CompactString;
 use compact_str::ToCompactString;
+use std::str::FromStr;
 
 #[derive(
   Debug,
@@ -40,8 +41,8 @@ impl FromV8 for AutoCmdEvent {
     value: v8::Local<'s, v8::Value>,
   ) -> Self {
     debug_assert!(value.is_string() || value.is_string_object());
-    let nargs = value.to_string(scope).unwrap().to_rust_string_lossy(scope);
-    AutoCmdEvent::from_str(&nargs).unwrap()
+    let event = value.to_string(scope).unwrap().to_rust_string_lossy(scope);
+    AutoCmdEvent::from_str(&event).unwrap()
   }
 }
 
