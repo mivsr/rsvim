@@ -3,6 +3,7 @@
 pub mod attr;
 pub mod ctx;
 pub mod def;
+pub mod event;
 pub mod opt;
 
 use crate::js::JsFuture;
