@@ -16,6 +16,6 @@ pub struct CommandAttributes {
   #[builder(default = "".to_compact_string())]
   pub event: CompactString,
 
-  #[builder(default = "".to_compact_string())]
-  pub pattern: CompactString,
+  #[builder(default = None)]
+  pub pattern: Option<CompactString>,
 }
