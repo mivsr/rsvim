@@ -28,6 +28,10 @@ pub enum AutoCmdEvent {
   #[strum(serialize = "VimLeavePre")]
   /// Just before all exit operations before editor exit
   VimLeavePre,
+
+  #[strum(serialize = "VimResized")]
+  /// After editor resized
+  VimResized,
 }
 
 impl FromV8 for AutoCmdEvent {
