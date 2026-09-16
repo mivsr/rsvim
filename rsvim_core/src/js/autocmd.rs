@@ -1,7 +1,9 @@
 //! Vim autocmd, i.e. event/subscription hooks.
 
+pub mod attr;
 pub mod ctx;
 pub mod def;
+pub mod opt;
 
 use crate::js::JsFuture;
 use crate::js::JsRuntime;

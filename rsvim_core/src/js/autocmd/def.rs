@@ -8,7 +8,6 @@
 
 use crate::is_v8_func;
 use crate::is_v8_str;
-use crate::js::command::attr::*;
 use crate::js::command::opt::*;
 use crate::js::converter::*;
 use compact_str::CompactString;
@@ -30,6 +29,5 @@ pub struct AutoCmdDefinition {
   pub name: Option<CompactString>, // Optional but unique name for a autocmd
   #[derive_where(skip)]
   pub callback: AutoCmdCallback,
-  pub attributes: CommandAttributes,
   pub options: CommandOptions,
 }
