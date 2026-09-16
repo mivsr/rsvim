@@ -1,4 +1,4 @@
-//! Vim autocmd options.
+//! Autocmd options.
 
 use compact_str::CompactString;
 

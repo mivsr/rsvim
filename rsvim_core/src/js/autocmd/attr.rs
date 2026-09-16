@@ -1,5 +1,8 @@
 //! Autocmd attributes.
 
+use compact_str::CompactString;
+use compact_str::ToCompactString;
+
 #[derive(
   Debug,
   Clone,
@@ -10,6 +13,9 @@
   rsvim_macro::FromV8,
 )]
 pub struct CommandAttributes {
-  #[builder(default = false)]
-  pub clear: bool,
+  #[builder(default = "".to_compact_string())]
+  pub event: CompactString,
+
+  #[builder(default = "".to_compact_string())]
+  pub pattern: CompactString,
 }

@@ -95,6 +95,7 @@ path-absolutize = { workspace = true }
 postcard = { workspace = true, default-features = false, features = [
   "use-std",
 ] }
+regress = { workspace = true, features = ["utf16"] }
 roaring = { workspace = true }
 ropey = { workspace = true, default-features = false }
 serde = { workspace = true, features = ["derive"] }
