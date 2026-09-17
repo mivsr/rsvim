@@ -76,7 +76,6 @@ pub struct AutoCmdAttributes {
 
 impl PartialEq for AutoCmdAttributes {
   fn eq(&self, other: &Self) -> bool {
-    // Ignore "pattern_regex"
     self.event == other.event && self.pattern == other.pattern
   }
 }
