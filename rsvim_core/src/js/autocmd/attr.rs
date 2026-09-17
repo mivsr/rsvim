@@ -61,17 +61,26 @@ impl ToV8 for AutoCmdEvent {
 )]
 pub struct AutoCmdAttributes {
   #[builder]
+  /// Autocmd event.
   pub event: AutoCmdEvent,
 
   #[builder(default = None)]
+  /// Regex pattern payload.
   pub pattern: Option<CompactString>,
 
   #[builder(default = None)]
   #[ignored_field]
+  /// Built regex from the `pattern` payload.
   pub pattern_regex: Option<Regex>,
 
   #[builder(default = None)]
+  /// Autocmd description
   pub description: Option<CompactString>,
+
+  #[builder(default = -1)]
+  /// By default autocmd will trigger forever if `repeat <= 0`,
+  /// otherwise if `repeat >= 1`, autocmd will trigger for `repeat` times.
+  pub repeat: i32,
 }
 
 impl PartialEq for AutoCmdAttributes {
