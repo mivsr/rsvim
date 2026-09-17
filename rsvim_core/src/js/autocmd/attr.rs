@@ -79,7 +79,8 @@ pub struct AutoCmdAttributes {
 
   #[builder(default = -1)]
   /// By default autocmd will trigger forever if `repeat <= 0`,
-  /// otherwise if `repeat >= 1`, autocmd will trigger for `repeat` times.
+  /// otherwise if `repeat >= 1`, autocmd will trigger for `repeat` times, then
+  /// it will be removed automatically.
   pub repeat: i32,
 }
 
