@@ -69,6 +69,9 @@ pub struct AutoCmdAttributes {
   #[builder(default = None)]
   #[ignored_field]
   pub pattern_regex: Option<Regex>,
+
+  #[builder(default = None)]
+  pub description: Option<CompactString>,
 }
 
 impl PartialEq for AutoCmdAttributes {
