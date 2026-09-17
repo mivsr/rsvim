@@ -10,7 +10,7 @@ use syn::parse_macro_input;
 
 // js {{{
 
-#[proc_macro_derive(ToV8)]
+#[proc_macro_derive(ToV8, attributes(ignored_field))]
 /// Convert rust struct to js object.
 ///
 /// A js object is like a key-value map that contains multiple data fields.
@@ -31,9 +31,14 @@ pub fn to_v8(input: TokenStream) -> TokenStream {
   let struct_fields = get_named_fields(&input.data);
 
   let is_option = |f: &syn::Field| is_type_match(&f.ty, "Option");
+  let is_ignored = |f: &syn::Field| is_ignored_field(f);
 
-  let plain = ToV8Tokens::collect(struct_fields.iter(), |f| !is_option(f));
-  let optional = ToV8Tokens::collect(struct_fields.iter(), is_option);
+  let plain = ToV8Tokens::collect(struct_fields.iter(), |f| {
+    !is_option(f) && !is_ignored(f)
+  });
+  let optional = ToV8Tokens::collect(struct_fields.iter(), |f| {
+    is_option(f) && !is_ignored(f)
+  });
 
   // Destructure for `quote!` use
   let (field, lowercamelcase, value) =
@@ -75,7 +80,7 @@ pub fn to_v8(input: TokenStream) -> TokenStream {
   }.into()
 }
 
-#[proc_macro_derive(FromV8)]
+#[proc_macro_derive(FromV8, attributes(ignored_field))]
 /// Convert js object to rust struct.
 pub fn from_v8(input: TokenStream) -> TokenStream {
   use js::*;
@@ -87,9 +92,14 @@ pub fn from_v8(input: TokenStream) -> TokenStream {
   let struct_fields = get_named_fields(&input.data);
 
   let is_option = |f: &syn::Field| is_type_match(&f.ty, "Option");
+  let is_ignored = |f: &syn::Field| is_ignored_field(f);
 
-  let tokens = FromV8Tokens::collect(struct_fields.iter(), |f| !is_option(f));
-  let optional_tokens = FromV8Tokens::collect(struct_fields.iter(), is_option);
+  let tokens = FromV8Tokens::collect(struct_fields.iter(), |f| {
+    !is_option(f) && !is_ignored(f)
+  });
+  let optional_tokens = FromV8Tokens::collect(struct_fields.iter(), |f| {
+    is_option(f) && !is_ignored(f)
+  });
 
   // Destructure for `quote!` use
   let (field, name, ty, lowercamelcase, value) = (

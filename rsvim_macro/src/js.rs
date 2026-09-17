@@ -22,6 +22,13 @@ pub fn is_type_match(ty: &syn::Type, ident_name: &str) -> bool {
   false
 }
 
+pub fn is_ignored_field(field: &syn::Field) -> bool {
+  field
+    .attrs
+    .iter()
+    .any(|attr| attr.path().is_ident("ignored_field"))
+}
+
 pub struct ToV8Tokens {
   pub field: Vec<syn::Ident>,
   pub lowercamelcase: Vec<String>,

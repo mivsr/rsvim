@@ -3,6 +3,7 @@
 use crate::js::converter::*;
 use compact_str::CompactString;
 use compact_str::ToCompactString;
+use regress::Regex;
 use std::str::FromStr;
 
 #[derive(
@@ -56,18 +57,25 @@ impl ToV8 for AutoCmdEvent {
 }
 
 #[derive(
-  Debug,
-  Clone,
-  PartialEq,
-  Eq,
-  derive_builder::Builder,
-  rsvim_macro::ToV8,
-  rsvim_macro::FromV8,
+  Debug, Clone, derive_builder::Builder, rsvim_macro::ToV8, rsvim_macro::FromV8,
 )]
-pub struct CommandAttributes {
+pub struct AutoCmdAttributes {
   #[builder]
   pub event: AutoCmdEvent,
 
   #[builder(default = None)]
   pub pattern: Option<CompactString>,
+
+  #[builder(default = None)]
+  #[ignored_field]
+  pub pattern_regex: Option<Regex>,
 }
+
+impl PartialEq for AutoCmdAttributes {
+  fn eq(&self, other: &Self) -> bool {
+    // Ignore "pattern_regex"
+    self.event == other.event && self.pattern == other.pattern
+  }
+}
+
+impl Eq for AutoCmdAttributes {}
